@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Firebase\JWT\JWT;
 use Firebase\JWT\JWK;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupabaseAuth
 {
@@ -26,6 +28,12 @@ class SupabaseAuth
             );
 
             $decoded = JWT::decode($token, JWK::parseKeySet($jwks));
+
+            // Find or create user from Supabase data
+            $user = User::findOrCreateFromSupabase((array) $decoded);
+
+            // Authenticate the user in Laravel
+            Auth::login($user);
 
             // Attach user to request
             $request->attributes->set('supabase_user', $decoded);

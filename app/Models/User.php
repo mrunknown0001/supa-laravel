@@ -18,9 +18,10 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'supabase_id',
         'name',
         'email',
-        'password',
+        'email_verified_at',
     ];
 
     /**
@@ -29,7 +30,6 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'password',
         'remember_token',
     ];
 
@@ -42,7 +42,32 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Find or create a user from Supabase user data
+     */
+    public static function findOrCreateFromSupabase(array $supabaseUser): self
+    {
+        $user = self::where('supabase_id', $supabaseUser['id'])->first();
+
+        if (!$user) {
+            $user = self::create([
+                'supabase_id' => $supabaseUser['id'],
+                'name' => $supabaseUser['user_metadata']['name'] ?? $supabaseUser['email'] ?? '',
+                'email' => $supabaseUser['email'],
+                'email_verified_at' => $supabaseUser['email_confirmed_at'] ? now() : null,
+            ]);
+        } else {
+            // Update user data if needed
+            $user->update([
+                'name' => $supabaseUser['user_metadata']['name'] ?? $user->name,
+                'email' => $supabaseUser['email'],
+                'email_verified_at' => $supabaseUser['email_confirmed_at'] ? now() : $user->email_verified_at,
+            ]);
+        }
+
+        return $user;
     }
 }
