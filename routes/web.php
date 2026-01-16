@@ -33,3 +33,9 @@ Route::middleware('auth')->group(function () {
         return redirect('/');
     })->name('logout');
 });
+
+Route::get('/settings', function () {
+    return response()->json([
+        'data' => Supabase::getSettings(),
+    ]);
+});
