@@ -151,88 +151,122 @@
     </div>
 
     <script>
-        // Theme management
-        function initializeTheme() {
-            // Get theme preference
-            let theme = 'light';
-            if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-                theme = localStorage.getItem('theme');
-            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                theme = 'dark';
+        // Simple theme toggle functionality
+        (function() {
+            'use strict';
+
+            // Get stored theme or default to light
+            function getStoredTheme() {
+                if (typeof localStorage !== 'undefined') {
+                    return localStorage.getItem('theme') || 'light';
+                }
+                return 'light';
+            }
+
+            // Store theme preference
+            function setStoredTheme(theme) {
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem('theme', theme);
+                }
             }
 
             // Apply theme to document
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                updateIcons(theme);
             }
 
             // Update all theme icons
-            updateThemeIcons(theme === 'dark');
+            function updateIcons(theme) {
+                const isDark = theme === 'dark';
 
-            return theme;
-        }
-
-        // Update theme icons function
-        function updateThemeIcons(isDark) {
-            // Sun icons (light mode)
-            const sunIcons = document.querySelectorAll('[id*="theme-icon-sun"]');
-            // Moon icons (dark mode)
-            const moonIcons = document.querySelectorAll('[id*="theme-icon-moon"]');
-
-            if (isDark) {
-                // Show moon, hide sun
-                sunIcons.forEach(icon => icon.classList.add('hidden'));
-                moonIcons.forEach(icon => icon.classList.remove('hidden'));
-            } else {
-                // Show sun, hide moon
-                sunIcons.forEach(icon => icon.classList.remove('hidden'));
-                moonIcons.forEach(icon => icon.classList.add('hidden'));
-            }
-        }
-
-        // Toggle theme function
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.contains('dark');
-
-            if (isDark) {
-                // Switch to light
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                updateThemeIcons(false);
-            } else {
-                // Switch to dark
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                updateThemeIcons(true);
-            }
-        }
-
-        // Initialize theme when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeTheme();
-
-            // Add click event listeners to all theme toggle buttons
-            const themeToggleButtons = document.querySelectorAll('[id*="theme-toggle"]');
-            themeToggleButtons.forEach(button => {
-                button.addEventListener('click', toggleTheme);
-            });
-        });
-
-        // Listen for system theme changes (only if no manual preference)
-        if (window.matchMedia) {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-                if (!localStorage.getItem('theme')) {
-                    if (e.matches) {
-                        document.documentElement.classList.add('dark');
-                        updateThemeIcons(true);
+                // Update all sun icons
+                document.querySelectorAll('[id*="theme-icon-sun"]').forEach(icon => {
+                    if (isDark) {
+                        icon.classList.add('hidden');
                     } else {
-                        document.documentElement.classList.remove('dark');
-                        updateThemeIcons(false);
+                        icon.classList.remove('hidden');
+                    }
+                });
+
+                // Update all moon icons
+                document.querySelectorAll('[id*="theme-icon-moon"]').forEach(icon => {
+                    if (isDark) {
+                        icon.classList.remove('hidden');
+                    } else {
+                        icon.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Toggle theme
+            function toggleTheme() {
+                const currentTheme = getStoredTheme();
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                setStoredTheme(newTheme);
+                applyTheme(newTheme);
+
+                console.log('Theme toggled to:', newTheme);
+            }
+
+            // Initialize theme
+            function initTheme() {
+                let theme = getStoredTheme();
+
+                // Check system preference if no stored preference
+                if (!localStorage.getItem('theme') && window.matchMedia) {
+                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        theme = 'dark';
                     }
                 }
+
+                applyTheme(theme);
+                console.log('Theme initialized to:', theme);
+            }
+
+            // Wait for DOM to be ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTheme);
+            } else {
+                initTheme();
+            }
+
+            // Add event listeners to theme toggle buttons
+            document.addEventListener('DOMContentLoaded', function() {
+                const buttons = document.querySelectorAll('[id*="theme-toggle"]');
+                console.log('Found theme toggle buttons:', buttons.length);
+
+                buttons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        toggleTheme();
+                    });
+                });
             });
-        }
+
+            // Listen for system theme changes
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                    if (!localStorage.getItem('theme')) {
+                        const newTheme = e.matches ? 'dark' : 'light';
+                        applyTheme(newTheme);
+                    }
+                });
+            }
+
+            // Make functions globally available for debugging
+            window.themeDebug = {
+                getStoredTheme,
+                setStoredTheme,
+                applyTheme,
+                toggleTheme,
+                initTheme
+            };
+        })();
     </script>
 </nav>
