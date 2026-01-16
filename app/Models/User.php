@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'email_verified_at',
+        'kyc_status',
+        'kyc_verified_at',
         'first_name',
         'last_name',
         'date_of_birth',
@@ -55,6 +57,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'kyc_verified_at' => 'datetime',
             'date_of_birth' => 'date',
         ];
     }
@@ -71,6 +74,8 @@ class User extends Authenticatable
             if ($profileData) {
                 // Map Supabase profile fields to user model attributes
                 $this->fill([
+                    'kyc_status' => $profileData['kyc_status'] ?? $this->kyc_status,
+                    'kyc_verified_at' => $profileData['kyc_verified_at'] ?? $this->kyc_verified_at,
                     'first_name' => $profileData['first_name'] ?? $this->first_name,
                     'last_name' => $profileData['last_name'] ?? $this->last_name,
                     'date_of_birth' => $profileData['date_of_birth'] ?? $this->date_of_birth,
@@ -99,6 +104,8 @@ class User extends Authenticatable
 
             $profileData = [
                 'id' => $this->supabase_id,
+                'kyc_status' => $this->kyc_status,
+                'kyc_verified_at' => $this->kyc_verified_at,
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
                 'date_of_birth' => $this->date_of_birth,
@@ -153,6 +160,9 @@ class User extends Authenticatable
 
         // Load profile data from Supabase
         $user->loadProfileFromSupabase();
+
+        // Save the updated user data including profile fields
+        $user->save();
 
         return $user;
     }

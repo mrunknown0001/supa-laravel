@@ -66,6 +66,13 @@ Route::get('/settings', function () {
     ]);
 });
 
+Route::get('/get-profile', function () {
+    return response()->json([
+        'data' => Supabase::getUserProfile(auth()->user()->supabase_id),
+        'supabase_id' => auth()->user()->supabase_id
+    ]);
+});
+
 // Email Verification Routes
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [\App\Http\Controllers\Auth\EmailVerificationPromptController::class, '__invoke'])

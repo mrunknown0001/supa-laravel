@@ -56,14 +56,14 @@
                         <!-- Sidebar Navigation -->
                         <nav class="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
                             @auth
-                                <a href="{{ route('dashboard') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'" class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                <a href="{{ route('dashboard') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                     <svg class="w-5 h-5 flex-shrink-0" :class="(sidebarOpen ? 'mr-3' : 'mr-0') + ' md:mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
                                     </svg>
                                     <span :class="(sidebarOpen ? 'block' : 'hidden') + ' md:block'">Dashboard</span>
                                 </a>
-                                <a href="{{ route('profile.edit') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'" class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                <a href="{{ route('profile.edit') }}" :class="sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 {{ request()->routeIs('profile.edit') ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                     <svg class="w-5 h-5 flex-shrink-0" :class="(sidebarOpen ? 'mr-3' : 'mr-0') + ' md:mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
