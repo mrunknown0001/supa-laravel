@@ -28,8 +28,19 @@
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
+            <!-- Theme Toggle & Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" type="button" class="mr-4 p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm">
+                    <svg id="theme-icon-sun" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <svg id="theme-icon-moon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                    <span class="sr-only">Toggle theme</span>
+                </button>
+
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -62,6 +73,16 @@
                     </x-dropdown>
                 @else
                     <div class="flex items-center space-x-4">
+                        <!-- Guest Theme Toggle -->
+                        <button id="theme-toggle-guest" type="button" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm">
+                            <svg id="theme-icon-sun-guest" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                            </svg>
+                            <svg id="theme-icon-moon-guest" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                            </svg>
+                            <span class="sr-only">Toggle theme</span>
+                        </button>
                         <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100">Login</a>
                     </div>
                 @endauth
@@ -92,9 +113,21 @@
         <!-- Responsive Settings Options -->
         @auth
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="px-4 flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    </div>
+                    <!-- Mobile Theme Toggle -->
+                    <button id="theme-toggle-mobile" type="button" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm">
+                        <svg id="theme-icon-sun-mobile" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <svg id="theme-icon-moon-mobile" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <span class="sr-only">Toggle theme</span>
+                    </button>
                 </div>
 
                 <div class="mt-3 space-y-1">
@@ -116,4 +149,90 @@
             </div>
         @endauth
     </div>
+
+    <script>
+        // Theme management
+        function initializeTheme() {
+            // Get theme preference
+            let theme = 'light';
+            if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+                theme = localStorage.getItem('theme');
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                theme = 'dark';
+            }
+
+            // Apply theme to document
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // Update all theme icons
+            updateThemeIcons(theme === 'dark');
+
+            return theme;
+        }
+
+        // Update theme icons function
+        function updateThemeIcons(isDark) {
+            // Sun icons (light mode)
+            const sunIcons = document.querySelectorAll('[id*="theme-icon-sun"]');
+            // Moon icons (dark mode)
+            const moonIcons = document.querySelectorAll('[id*="theme-icon-moon"]');
+
+            if (isDark) {
+                // Show moon, hide sun
+                sunIcons.forEach(icon => icon.classList.add('hidden'));
+                moonIcons.forEach(icon => icon.classList.remove('hidden'));
+            } else {
+                // Show sun, hide moon
+                sunIcons.forEach(icon => icon.classList.remove('hidden'));
+                moonIcons.forEach(icon => icon.classList.add('hidden'));
+            }
+        }
+
+        // Toggle theme function
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+
+            if (isDark) {
+                // Switch to light
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcons(false);
+            } else {
+                // Switch to dark
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcons(true);
+            }
+        }
+
+        // Initialize theme when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+
+            // Add click event listeners to all theme toggle buttons
+            const themeToggleButtons = document.querySelectorAll('[id*="theme-toggle"]');
+            themeToggleButtons.forEach(button => {
+                button.addEventListener('click', toggleTheme);
+            });
+        });
+
+        // Listen for system theme changes (only if no manual preference)
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    if (e.matches) {
+                        document.documentElement.classList.add('dark');
+                        updateThemeIcons(true);
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        updateThemeIcons(false);
+                    }
+                }
+            });
+        }
+    </script>
 </nav>
