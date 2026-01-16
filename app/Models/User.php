@@ -22,6 +22,19 @@ class User extends Authenticatable
         'name',
         'email',
         'email_verified_at',
+        'first_name',
+        'last_name',
+        'date_of_birth',
+        'nationality',
+        'street',
+        'postal_code',
+        'city',
+        'recipient_name',
+        'iban',
+        'bic',
+        'tax_number',
+        'social_security_number',
+        'health_insurance',
     ];
 
     /**
@@ -42,7 +55,77 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'date_of_birth' => 'date',
         ];
+    }
+
+    /**
+     * Load profile data from Supabase profiles table
+     */
+    public function loadProfileFromSupabase(): void
+    {
+        if ($this->supabase_id) {
+            $supabaseService = app(\App\Services\SupabaseService::class);
+            $profileData = $supabaseService->getUserProfile($this->supabase_id);
+
+            if ($profileData) {
+                // Map Supabase profile fields to user model attributes
+                $this->fill([
+                    'first_name' => $profileData['first_name'] ?? $this->first_name,
+                    'last_name' => $profileData['last_name'] ?? $this->last_name,
+                    'date_of_birth' => $profileData['date_of_birth'] ?? $this->date_of_birth,
+                    'nationality' => $profileData['nationality'] ?? $this->nationality,
+                    'street' => $profileData['street'] ?? $this->street,
+                    'postal_code' => $profileData['postal_code'] ?? $this->postal_code,
+                    'city' => $profileData['city'] ?? $this->city,
+                    'recipient_name' => $profileData['recipient_name'] ?? $this->recipient_name,
+                    'iban' => $profileData['iban'] ?? $this->iban,
+                    'bic' => $profileData['bic'] ?? $this->bic,
+                    'tax_number' => $profileData['tax_number'] ?? $this->tax_number,
+                    'social_security_number' => $profileData['social_security_number'] ?? $this->social_security_number,
+                    'health_insurance' => $profileData['health_insurance'] ?? $this->health_insurance,
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Sync profile data to Supabase profiles table
+     */
+    public function syncProfileToSupabase(): bool
+    {
+        if ($this->supabase_id) {
+            $supabaseService = app(\App\Services\SupabaseService::class);
+
+            $profileData = [
+                'id' => $this->supabase_id,
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'date_of_birth' => $this->date_of_birth,
+                'nationality' => $this->nationality,
+                'street' => $this->street,
+                'postal_code' => $this->postal_code,
+                'city' => $this->city,
+                'recipient_name' => $this->recipient_name,
+                'iban' => $this->iban,
+                'bic' => $this->bic,
+                'tax_number' => $this->tax_number,
+                'social_security_number' => $this->social_security_number,
+                'health_insurance' => $this->health_insurance,
+                'updated_at' => now()->toISOString(),
+            ];
+
+            // Check if profile exists
+            $existingProfile = $supabaseService->getUserProfile($this->supabase_id);
+
+            if ($existingProfile) {
+                return $supabaseService->updateUserProfile($this->supabase_id, $profileData);
+            } else {
+                return $supabaseService->createUserProfile($profileData);
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -67,6 +150,9 @@ class User extends Authenticatable
                 'email_verified_at' => $supabaseUser['email_confirmed_at'] ? now() : $user->email_verified_at,
             ]);
         }
+
+        // Load profile data from Supabase
+        $user->loadProfileFromSupabase();
 
         return $user;
     }

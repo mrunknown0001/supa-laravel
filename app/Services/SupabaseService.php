@@ -128,4 +128,64 @@ class SupabaseService
             throw $e;
         }
     }
+
+    /**
+     * Get user profile from profiles table
+     */
+    public function getUserProfile(string $userId): ?array
+    {
+        try {
+            $response = $this->client->get("/rest/v1/profiles?id=eq.{$userId}");
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data[0] ?? null;
+        } catch (RequestException $e) {
+            Log::error('Supabase get user profile error', [
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Update user profile in profiles table
+     */
+    public function updateUserProfile(string $userId, array $profileData): bool
+    {
+        try {
+            $response = $this->client->patch("/rest/v1/profiles?id=eq.{$userId}", [
+                'json' => $profileData,
+            ]);
+            return $response->getStatusCode() === 204;
+        } catch (RequestException $e) {
+            Log::error('Supabase update user profile error', [
+                'user_id' => $userId,
+                'profile_data' => $profileData,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Create user profile in profiles table
+     */
+    public function createUserProfile(array $profileData): bool
+    {
+        try {
+            $response = $this->client->post('/rest/v1/profiles', [
+                'json' => $profileData,
+            ]);
+            return $response->getStatusCode() === 201;
+        } catch (RequestException $e) {
+            Log::error('Supabase create user profile error', [
+                'profile_data' => $profileData,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return false;
+        }
+    }
 }
