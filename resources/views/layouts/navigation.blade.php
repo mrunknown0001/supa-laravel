@@ -40,28 +40,30 @@
 
                 <!-- KYC Status -->
                 @auth
-                    @php
-                        $user = Auth::user();
-                        // Load profile if kyc_status is not set
-                        if (!$user->kyc_verified_at && $user->supabase_id) {
-                            $user->loadProfileFromSupabase();
-                            $user->save();
-                        }
-                        $kycStatus = $user->kyc_status ?? 'pending';
-                        $statusColors = [
-                            'approved' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-                            'pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-                            'rejected' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-                        ];
-                        $statusText = [
-                            'approved' => 'Verified',
-                            'pending' => 'Pending',
-                            'rejected' => 'Rejected',
-                        ];
-                    @endphp
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$kycStatus] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300' }}">
-                        {{ $statusText[$kycStatus] ?? 'Unknown' }}
-                    </span>
+                    @if(Auth::user()->role !== 'admin')
+                        @php
+                            $user = Auth::user();
+                            // Load profile if kyc_status is not set
+                            if (!$user->kyc_verified_at && $user->supabase_id) {
+                                $user->loadProfileFromSupabase();
+                                $user->save();
+                            }
+                            $kycStatus = $user->kyc_status ?? 'pending';
+                            $statusColors = [
+                                'approved' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                'pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                                'rejected' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+                            ];
+                            $statusText = [
+                                'approved' => 'Verified',
+                                'pending' => 'Pending',
+                                'rejected' => 'Rejected',
+                            ];
+                        @endphp
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$kycStatus] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300' }}">
+                            {{ $statusText[$kycStatus] ?? 'Unknown' }}
+                        </span>
+                    @endif
                 @endauth
 
                 @auth

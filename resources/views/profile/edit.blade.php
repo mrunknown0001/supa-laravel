@@ -1,4 +1,8 @@
-<x-app-layout>
+@php
+$layout = auth()->user()->role === 'admin' ? 'admin-app-layout' : 'app-layout';
+@endphp
+
+<x-dynamic-component :component="$layout">
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-2xl overflow-hidden">
@@ -98,4 +102,4 @@
             showTab('profile');
         });
     </script>
-</x-app-layout>
+</x-dynamic-component>

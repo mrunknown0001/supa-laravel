@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'email_verified_at',
+        'role',
         'kyc_status',
         'kyc_verified_at',
         'first_name',
@@ -74,6 +75,7 @@ class User extends Authenticatable
             if ($profileData) {
                 // Map Supabase profile fields to user model attributes
                 $this->fill([
+                    'role' => $profileData['role'] ?? $this->role,
                     'kyc_status' => $profileData['kyc_status'] ?? $this->kyc_status,
                     'kyc_verified_at' => $profileData['kyc_verified_at'] ?? $this->kyc_verified_at,
                     'first_name' => $profileData['first_name'] ?? $this->first_name,
@@ -104,6 +106,7 @@ class User extends Authenticatable
 
             $profileData = [
                 'id' => $this->supabase_id,
+                'role' => $this->role,
                 'kyc_status' => $this->kyc_status,
                 'kyc_verified_at' => $this->kyc_verified_at,
                 'first_name' => $this->first_name,

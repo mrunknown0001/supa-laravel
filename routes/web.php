@@ -35,7 +35,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->name('dashboard');
+    })->middleware('role.redirect')->name('dashboard');
+
+    Route::get('/admin', function () {
+        return view('admin.dashboard');
+    })->middleware('role.redirect')->name('admin.dashboard');
 
     Route::get('/payout', PayoutIndex::class)->name('payout');
 
