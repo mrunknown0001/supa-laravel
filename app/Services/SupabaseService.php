@@ -207,4 +207,23 @@ class SupabaseService
             return null;
         }
     }
+
+    /**
+     * Get payout requests for a worker
+     */
+    public function getPayoutRequests(string $workerId): array
+    {
+        try {
+            $response = $this->client->get("/rest/v1/payout_requests?worker_id=eq.{$workerId}&order=requested_at.desc");
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data ?? [];
+        } catch (RequestException $e) {
+            Log::error('Supabase get payout requests error', [
+                'worker_id' => $workerId,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return [];
+        }
+    }
 }
