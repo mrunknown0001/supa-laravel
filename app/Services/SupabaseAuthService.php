@@ -172,4 +172,30 @@ class SupabaseAuthService
             return false;
         }
     }
+
+    /**
+     * Change password
+     */
+    public function changePassword(string $accessToken, string $newPassword): array
+    {
+        try {
+            $response = $this->client->put('/auth/v1/user', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                ],
+                'json' => [
+                    'password' => $newPassword,
+                ],
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (RequestException $e) {
+            Log::error('Supabase change password error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+
+            throw $e;
+        }
+    }
 }

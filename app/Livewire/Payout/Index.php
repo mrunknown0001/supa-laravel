@@ -1,58 +1,57 @@
 <?php
 
-namespace App\Livewire\Dashboard;
+namespace App\Livewire\Payout;
 
-use App\Services\SupabaseAuthService;
 use App\Services\SupabaseService;
 use Livewire\Component;
 
 class Index extends Component
 {
     public $user;
-    public $userDetails;
     public $workerBalance;
+    public $payoutRequests = [];
     public $loading = true;
+    public $activeTab = 'overview';
 
     public function mount()
     {
-        $this->loadUserData();
+        $this->loadData();
     }
 
-    public function loadUserData()
+    public function loadData()
     {
         $this->loading = true;
 
         try {
             $this->user = auth()->user();
 
-            // Get detailed user info from Supabase
-            $accessToken = session('supabase_access_token');
-            if ($accessToken) {
-                $supabaseAuth = app(SupabaseAuthService::class);
-                $this->userDetails = $supabaseAuth->getUser($accessToken);
-            }
-
             // Get worker balance from Supabase
             if ($this->user && $this->user->supabase_id) {
                 $supabaseService = app(SupabaseService::class);
                 $this->workerBalance = $supabaseService->getWorkerBalance($this->user->supabase_id);
+                $this->payoutRequests = $supabaseService->getPayoutRequests($this->user->supabase_id);
             }
         } catch (\Exception $e) {
-            $this->userDetails = null;
             $this->workerBalance = null;
+            $this->payoutRequests = [];
         } finally {
             $this->loading = false;
         }
     }
 
-    public function refreshUserData()
+    public function setActiveTab($tab)
     {
-        $this->loadUserData();
-        $this->dispatch('user-data-refreshed');
+        $this->activeTab = $tab;
+    }
+
+    public function refreshData()
+    {
+        $this->loadData();
+        $this->dispatch('data-refreshed');
     }
 
     public function render()
     {
-        return view('livewire.dashboard.index');
+        return view('livewire.payout.index');
     }
 }
