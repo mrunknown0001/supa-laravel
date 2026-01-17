@@ -1,70 +1,52 @@
 <div>
-    <div class="py-12">
+    <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Header -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-lg font-semibold">Payout Management</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Manage your earnings, transactions, and withdrawal requests
-                            </p>
-                        </div>
-                        <button
-                            wire:click="refreshData"
-                            class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
-                            wire:loading.attr="disabled"
-                        >
-                            <span wire:loading.remove>
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-2xl overflow-hidden">
+                <!-- Tab Navigation -->
+                <div class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button type="button"
+                                onclick="showTab('overview')"
+                                id="overview-tab"
+                                class="tab-button active py-4 px-1 border-b-2 font-medium text-sm border-blue-500 text-blue-600 dark:text-blue-400 transition-colors duration-200">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
-                                Refresh
-                            </span>
-                            <span wire:loading>
-                                <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Refreshing...
-                            </span>
+                                <span>Overview</span>
+                            </div>
                         </button>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Tabs -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="border-b border-gray-200 dark:border-gray-700">
-                    <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-                        <button
-                            wire:click="setActiveTab('overview')"
-                            :class="$activeTab === 'overview' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
-                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                        >
-                            Overview
+                        <button type="button"
+                                onclick="showTab('transactions')"
+                                id="transactions-tab"
+                                class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Transactions</span>
+                            </div>
                         </button>
-                        <button
-                            wire:click="setActiveTab('transactions')"
-                            :class="$activeTab === 'transactions' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
-                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                        >
-                            Transactions
-                        </button>
-                        <button
-                            wire:click="setActiveTab('withdrawals')"
-                            :class="$activeTab === 'withdrawals' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
-                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                        >
-                            Withdrawal Requests
+
+                        <button type="button"
+                                onclick="showTab('withdrawals')"
+                                id="withdrawals-tab"
+                                class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <span>Withdrawal Requests</span>
+                            </div>
                         </button>
                     </nav>
                 </div>
 
-                <div class="p-6">
+                <!-- Tab Content -->
+                <div class="p-6 sm:p-8">
                     <!-- Overview Tab -->
-                    <div x-show="$wire.activeTab === 'overview'" x-transition>
+                    <div id="overview-content" class="tab-content">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <!-- Current Balance -->
                             <div class="bg-gray-50 dark:bg-gray-700 overflow-hidden shadow-sm sm:rounded-lg">
@@ -78,17 +60,9 @@
                                         <h4 class="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Current Balance</h4>
                                     </div>
 
-                                    @if($loading)
-                                        <div class="animate-pulse">
-                                            <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-24"></div>
-                                        </div>
-                                    @elseif($workerBalance)
-                                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">
-                                            ${{ number_format($workerBalance['current_balance'] ?? 0, 2) }}
-                                        </div>
-                                    @else
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">N/A</p>
-                                    @endif
+                                    <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+                                        $0.00
+                                    </div>
                                 </div>
                             </div>
 
@@ -104,17 +78,9 @@
                                         <h4 class="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Total Earned</h4>
                                     </div>
 
-                                    @if($loading)
-                                        <div class="animate-pulse">
-                                            <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-24"></div>
-                                        </div>
-                                    @elseif($workerBalance)
-                                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                            ${{ number_format($workerBalance['total_earned'] ?? 0, 2) }}
-                                        </div>
-                                    @else
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">N/A</p>
-                                    @endif
+                                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                        $0.00
+                                    </div>
                                 </div>
                             </div>
 
@@ -130,24 +96,16 @@
                                         <h4 class="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Total Paid Out</h4>
                                     </div>
 
-                                    @if($loading)
-                                        <div class="animate-pulse">
-                                            <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-24"></div>
-                                        </div>
-                                    @elseif($workerBalance)
-                                        <div class="text-2xl font-bold text-red-600 dark:text-red-400">
-                                            ${{ number_format($workerBalance['total_paid_out'] ?? 0, 2) }}
-                                        </div>
-                                    @else
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">N/A</p>
-                                    @endif
+                                    <div class="text-2xl font-bold text-red-600 dark:text-red-400">
+                                        $0.00
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Transactions Tab -->
-                    <div x-show="$wire.activeTab === 'transactions'" x-transition>
+                    <div id="transactions-content" class="tab-content hidden">
                         <div class="text-center py-12">
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -158,12 +116,11 @@
                     </div>
 
                     <!-- Withdrawal Requests Tab -->
-                    <div x-show="$wire.activeTab === 'withdrawals'" x-transition>
+                    <div id="withdrawals-content" class="tab-content hidden">
                         @if($loading)
-                            <div class="animate-pulse">
-                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
-                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                            <div class="text-center py-12">
+                                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                                <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading withdrawal requests...</p>
                             </div>
                         @else
                             @if(count($payoutRequests) > 0)
@@ -171,40 +128,30 @@
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                         <thead class="bg-gray-50 dark:bg-gray-700">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Worker ID</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Requested At</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Reviewed By</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Reviewed At</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Amount
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Status
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Requested At
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                             @foreach($payoutRequests as $request)
                                                 <tr>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        {{ substr($request['worker_id'], 0, 8) }}...
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                                         ${{ number_format($request['amount'], 2) }}
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                            @if($request['status'] === 'approved') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                                            @elseif($request['status'] === 'pending') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
-                                                            @else bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
-                                                            @endif">
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $this->getStatusBadgeClass($request['status']) }}">
                                                             {{ ucfirst($request['status']) }}
                                                         </span>
                                                     </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                                        {{ \Carbon\Carbon::parse($request['requested_at'])->format('M j, Y H:i') }}
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                                        {{ $request['reviewed_by'] ? substr($request['reviewed_by'], 0, 8) . '...' : 'N/A' }}
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                                        {{ $request['reviewed_at'] ? \Carbon\Carbon::parse($request['reviewed_at'])->format('M j, Y H:i') : 'N/A' }}
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                        {{ \Carbon\Carbon::parse($request['requested_at'])->format('M j, Y g:i A') }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -227,12 +174,38 @@
         </div>
     </div>
 
-    <!-- Alpine.js powered notification -->
-    <div x-data="{ show: false }"
-         x-show="show"
-         x-transition
-         @data-refreshed.window="show = true; setTimeout(() => show = false, 3000)"
-         class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg">
-        Data refreshed successfully!
-    </div>
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents with fade effect
+            document.querySelectorAll('.tab-content').forEach(content => {
+                if (!content.classList.contains('hidden')) {
+                    content.style.opacity = '0';
+                    setTimeout(() => {
+                        content.classList.add('hidden');
+                        content.style.opacity = '1';
+                    }, 150);
+                }
+            });
+
+            // Remove active state from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                button.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+            });
+
+            // Show selected tab content with fade effect
+            setTimeout(() => {
+                document.getElementById(tabName + '-content').classList.remove('hidden');
+            }, 150);
+
+            // Activate selected tab
+            document.getElementById(tabName + '-tab').classList.add('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+            document.getElementById(tabName + '-tab').classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+        }
+
+        // Initialize first tab on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showTab('overview');
+        });
+    </script>
 </div>

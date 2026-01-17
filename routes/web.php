@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Auth\Login;
+use App\Livewire\Payout\Index as PayoutIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -36,9 +37,7 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/payout', function () {
-        return view('payout');
-    })->name('payout');
+    Route::get('/payout', PayoutIndex::class)->name('payout');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -7,47 +7,39 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $user;
-    public $workerBalance;
     public $payoutRequests = [];
     public $loading = true;
-    public $activeTab = 'overview';
 
     public function mount()
     {
-        $this->loadData();
+        $this->loadPayoutRequests();
     }
 
-    public function loadData()
+    public function loadPayoutRequests()
     {
         $this->loading = true;
 
         try {
-            $this->user = auth()->user();
-
-            // Get worker balance from Supabase
-            if ($this->user && $this->user->supabase_id) {
+            $user = auth()->user();
+            if ($user && $user->supabase_id) {
                 $supabaseService = app(SupabaseService::class);
-                $this->workerBalance = $supabaseService->getWorkerBalance($this->user->supabase_id);
-                $this->payoutRequests = $supabaseService->getPayoutRequests($this->user->supabase_id);
+                $this->payoutRequests = $supabaseService->getPayoutRequests($user->supabase_id);
             }
         } catch (\Exception $e) {
-            $this->workerBalance = null;
             $this->payoutRequests = [];
         } finally {
             $this->loading = false;
         }
     }
 
-    public function setActiveTab($tab)
+    public function getStatusBadgeClass($status)
     {
-        $this->activeTab = $tab;
-    }
-
-    public function refreshData()
-    {
-        $this->loadData();
-        $this->dispatch('data-refreshed');
+        return match (strtolower($status)) {
+            'approved' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+            'pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+            'rejected' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+            default => 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+        };
     }
 
     public function render()
