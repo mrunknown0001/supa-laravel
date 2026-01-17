@@ -188,4 +188,23 @@ class SupabaseService
             return false;
         }
     }
+
+    /**
+     * Get worker balance from worker_balances table
+     */
+    public function getWorkerBalance(string $workerId): ?array
+    {
+        try {
+            $response = $this->client->get("/rest/v1/worker_balances?worker_id=eq.{$workerId}");
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data[0] ?? null;
+        } catch (RequestException $e) {
+            Log::error('Supabase get worker balance error', [
+                'worker_id' => $workerId,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return null;
+        }
+    }
 }
