@@ -8,14 +8,15 @@ use Livewire\Component;
 class Index extends Component
 {
     public $payoutRequests = [];
+    public $workerBalance;
     public $loading = true;
 
     public function mount()
     {
-        $this->loadPayoutRequests();
+        $this->loadData();
     }
 
-    public function loadPayoutRequests()
+    public function loadData()
     {
         $this->loading = true;
 
@@ -24,9 +25,11 @@ class Index extends Component
             if ($user && $user->supabase_id) {
                 $supabaseService = app(SupabaseService::class);
                 $this->payoutRequests = $supabaseService->getPayoutRequests($user->supabase_id);
+                $this->workerBalance = $supabaseService->getWorkerBalance($user->supabase_id);
             }
         } catch (\Exception $e) {
             $this->payoutRequests = [];
+            $this->workerBalance = null;
         } finally {
             $this->loading = false;
         }

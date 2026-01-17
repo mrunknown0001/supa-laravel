@@ -60,9 +60,17 @@
                                         <h4 class="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Current Balance</h4>
                                     </div>
 
-                                    <div class="text-2xl font-bold text-green-600 dark:text-green-400">
-                                        $0.00
-                                    </div>
+                                    @if($loading)
+                                        <div class="animate-pulse">
+                                            <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                                        </div>
+                                    @elseif($workerBalance)
+                                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+                                            ${{ number_format($workerBalance['current_balance'] ?? 0, 2) }}
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">N/A</p>
+                                    @endif
                                 </div>
                             </div>
 
@@ -78,9 +86,17 @@
                                         <h4 class="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Total Earned</h4>
                                     </div>
 
-                                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                        $0.00
-                                    </div>
+                                    @if($loading)
+                                        <div class="animate-pulse">
+                                            <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                                        </div>
+                                    @elseif($workerBalance)
+                                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                            ${{ number_format($workerBalance['total_earned'] ?? 0, 2) }}
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">N/A</p>
+                                    @endif
                                 </div>
                             </div>
 
@@ -96,9 +112,17 @@
                                         <h4 class="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Total Paid Out</h4>
                                     </div>
 
-                                    <div class="text-2xl font-bold text-red-600 dark:text-red-400">
-                                        $0.00
-                                    </div>
+                                    @if($loading)
+                                        <div class="animate-pulse">
+                                            <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                                        </div>
+                                    @elseif($workerBalance)
+                                        <div class="text-2xl font-bold text-red-600 dark:text-red-400">
+                                            ${{ number_format($workerBalance['total_paid_out'] ?? 0, 2) }}
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">N/A</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
