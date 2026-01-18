@@ -47,6 +47,6 @@ class Index extends Component
 
     public function render()
     {
-        return view('livewire.payout.index');
+        return view('livewire.payout.index')->layout('layouts.app');
     }
 }

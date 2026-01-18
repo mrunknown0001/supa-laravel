@@ -41,9 +41,15 @@ Route::middleware('auth')->group(function () {
         return view('admin.dashboard');
     })->middleware('role.redirect')->name('admin.dashboard');
 
-    Route::get('/payout', PayoutIndex::class)->name('payout');
+    Route::get('/payout', function () {
+        return view('payout');
+    })->name('payout');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', function () {
+        $user = auth()->user();
+        $user->loadProfileFromSupabase();
+        return view('profile.edit', ['user' => $user]);
+    })->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 

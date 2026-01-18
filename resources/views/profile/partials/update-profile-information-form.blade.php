@@ -40,16 +40,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
                         <x-input-label for="name" :value="__('Name')" />
-                        <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+                        <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', auth()->user()->name)" required autofocus autocomplete="name" />
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </div>
 
                     <div class="md:col-span-2">
                         <x-input-label for="email" :value="__('Email')" />
-                        <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+                        <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', auth()->user()->email)" required autocomplete="username" />
                         <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
-                        @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+                        @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
                             <div>
                                 <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
                                     {{ __('Your email address is unverified.') }}
@@ -86,25 +86,25 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <x-input-label for="first_name" :value="__('First Name')" />
-                    <x-text-input id="first_name" name="first_name" type="text" class="mt-1 block w-full" :value="old('first_name', $user->first_name)" autocomplete="given-name" />
+                    <x-text-input id="first_name" name="first_name" type="text" class="mt-1 block w-full" :value="old('first_name', auth()->user()->first_name)" autocomplete="given-name" />
                     <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
                 </div>
 
                 <div>
                     <x-input-label for="last_name" :value="__('Last Name')" />
-                    <x-text-input id="last_name" name="last_name" type="text" class="mt-1 block w-full" :value="old('last_name', $user->last_name)" autocomplete="family-name" />
+                    <x-text-input id="last_name" name="last_name" type="text" class="mt-1 block w-full" :value="old('last_name', auth()->user()->last_name)" autocomplete="family-name" />
                     <x-input-error class="mt-2" :messages="$errors->get('last_name')" />
                 </div>
 
                 <div>
                     <x-input-label for="date_of_birth" :value="__('Date of Birth')" />
-                    <x-text-input id="date_of_birth" name="date_of_birth" type="date" class="mt-1 block w-full" :value="old('date_of_birth', $user->date_of_birth?->format('Y-m-d'))" />
+                    <x-text-input id="date_of_birth" name="date_of_birth" type="date" class="mt-1 block w-full" :value="old('date_of_birth', auth()->user()->date_of_birth?->format('Y-m-d'))" />
                     <x-input-error class="mt-2" :messages="$errors->get('date_of_birth')" />
                 </div>
 
                 <div>
                     <x-input-label for="nationality" :value="__('Nationality')" />
-                    <x-text-input id="nationality" name="nationality" type="text" class="mt-1 block w-full" :value="old('nationality', $user->nationality)" />
+                    <x-text-input id="nationality" name="nationality" type="text" class="mt-1 block w-full" :value="old('nationality', auth()->user()->nationality)" />
                     <x-input-error class="mt-2" :messages="$errors->get('nationality')" />
                 </div>
             </div>
@@ -126,19 +126,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
                     <x-input-label for="street" :value="__('Street')" />
-                    <x-text-input id="street" name="street" type="text" class="mt-1 block w-full" :value="old('street', $user->street)" autocomplete="address-line1" />
+                    <x-text-input id="street" name="street" type="text" class="mt-1 block w-full" :value="old('street', auth()->user()->street)" autocomplete="address-line1" />
                     <x-input-error class="mt-2" :messages="$errors->get('street')" />
                 </div>
 
                 <div>
                     <x-input-label for="postal_code" :value="__('Postal Code')" />
-                    <x-text-input id="postal_code" name="postal_code" type="text" class="mt-1 block w-full" :value="old('postal_code', $user->postal_code)" autocomplete="postal-code" />
+                    <x-text-input id="postal_code" name="postal_code" type="text" class="mt-1 block w-full" :value="old('postal_code', auth()->user()->postal_code)" autocomplete="postal-code" />
                     <x-input-error class="mt-2" :messages="$errors->get('postal_code')" />
                 </div>
 
                 <div>
                     <x-input-label for="city" :value="__('City')" />
-                    <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city', $user->city)" autocomplete="address-level2" />
+                    <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city', auth()->user()->city)" autocomplete="address-level2" />
                     <x-input-error class="mt-2" :messages="$errors->get('city')" />
                 </div>
             </div>
@@ -160,19 +160,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
                     <x-input-label for="recipient_name" :value="__('Recipient Name')" />
-                    <x-text-input id="recipient_name" name="recipient_name" type="text" class="mt-1 block w-full" :value="old('recipient_name', $user->recipient_name)" />
+                    <x-text-input id="recipient_name" name="recipient_name" type="text" class="mt-1 block w-full" :value="old('recipient_name', auth()->user()->recipient_name)" />
                     <x-input-error class="mt-2" :messages="$errors->get('recipient_name')" />
                 </div>
 
                 <div>
                     <x-input-label for="iban" :value="__('IBAN')" />
-                    <x-text-input id="iban" name="iban" type="text" class="mt-1 block w-full" :value="old('iban', $user->iban)" />
+                    <x-text-input id="iban" name="iban" type="text" class="mt-1 block w-full" :value="old('iban', auth()->user()->iban)" />
                     <x-input-error class="mt-2" :messages="$errors->get('iban')" />
                 </div>
 
                 <div>
                     <x-input-label for="bic" :value="__('BIC')" />
-                    <x-text-input id="bic" name="bic" type="text" class="mt-1 block w-full" :value="old('bic', $user->bic)" />
+                    <x-text-input id="bic" name="bic" type="text" class="mt-1 block w-full" :value="old('bic', auth()->user()->bic)" />
                     <x-input-error class="mt-2" :messages="$errors->get('bic')" />
                 </div>
             </div>
@@ -195,19 +195,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <x-input-label for="tax_number" :value="__('Tax Number')" />
-                    <x-text-input id="tax_number" name="tax_number" type="text" class="mt-1 block w-full" :value="old('tax_number', $user->tax_number)" />
+                    <x-text-input id="tax_number" name="tax_number" type="text" class="mt-1 block w-full" :value="old('tax_number', auth()->user()->tax_number)" />
                     <x-input-error class="mt-2" :messages="$errors->get('tax_number')" />
                 </div>
 
                 <div>
                     <x-input-label for="social_security_number" :value="__('Social Security Number')" />
-                    <x-text-input id="social_security_number" name="social_security_number" type="text" class="mt-1 block w-full" :value="old('social_security_number', $user->social_security_number)" />
+                    <x-text-input id="social_security_number" name="social_security_number" type="text" class="mt-1 block w-full" :value="old('social_security_number', auth()->user()->social_security_number)" />
                     <x-input-error class="mt-2" :messages="$errors->get('social_security_number')" />
                 </div>
 
                 <div class="md:col-span-2">
                     <x-input-label for="health_insurance" :value="__('Health Insurance')" />
-                    <x-text-input id="health_insurance" name="health_insurance" type="text" class="mt-1 block w-full" :value="old('health_insurance', $user->health_insurance)" />
+                    <x-text-input id="health_insurance" name="health_insurance" type="text" class="mt-1 block w-full" :value="old('health_insurance', auth()->user()->health_insurance)" />
                     <x-input-error class="mt-2" :messages="$errors->get('health_insurance')" />
                 </div>
             </div>

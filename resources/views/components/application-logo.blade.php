@@ -2,7 +2,7 @@
     $logoUrl = Supabase::getLogoUrl();
 @endphp<!-- Logo -->
 <div class="shrink-0 flex items-center">
-    <a href="{{ route('dashboard') }}">
+    <a href="{{ route('dashboard') }}" wire:navigate>
         @if($logoUrl)
             <img src="{{ $logoUrl }}" alt="{{ Supabase::getCompanyName() }}" class="block h-9 w-auto">
         @else
