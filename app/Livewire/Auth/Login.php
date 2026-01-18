@@ -45,9 +45,17 @@ class Login extends Component
                 ]);
             }
 
+            // Load profile to get role
+            $user->loadProfileFromSupabase();
+
             Auth::login($user, $this->remember);
 
-            return redirect()->intended(route('dashboard', absolute: false));
+            // Redirect based on role
+            if ($user->role === 'admin') {
+                return redirect()->intended(route('admin.dashboard', absolute: false));
+            } else {
+                return redirect()->intended(route('dashboard', absolute: false));
+            }
 
         } catch (\Exception $e) {
             $this->addError('login', 'Invalid credentials');

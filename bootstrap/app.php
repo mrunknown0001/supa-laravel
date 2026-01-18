@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'supabase.auth' => \App\Http\Middleware\SupabaseAuth::class,
+            'role.redirect' => \App\Http\Middleware\RoleBasedRedirect::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

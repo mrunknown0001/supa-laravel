@@ -145,6 +145,7 @@
         </div>
 
         <!-- Financial Data -->
+        @if(auth()->user()->role !== 'admin')
         <div class="space-y-6">
             <div class="flex items-center space-x-2">
                 <div class="flex-shrink-0 w-5 h-5 rounded bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
@@ -176,8 +177,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Payroll -->
+        @if(auth()->user()->role !== 'admin')
         <div class="space-y-6">
             <div class="flex items-center space-x-2">
                 <div class="flex-shrink-0 w-5 h-5 rounded bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center">
@@ -210,6 +213,7 @@
             </div>
             </div>
         </div>
+        @endif
 
         <div class="flex items-center gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
