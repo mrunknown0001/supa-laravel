@@ -62,7 +62,12 @@
                                     </svg>
                                     <span :class="(sidebarOpen ? 'block' : 'hidden') + ' md:block'">Admin Dashboard</span>
                                 </a>
-                                <!-- Add more admin links here if needed -->
+                                <a href="{{ route('admin.applications') }}" wire:navigate wire:navigate.hover :class="sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 {{ request()->routeIs('admin.applications') ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                                    <svg class="w-5 h-5 flex-shrink-0" :class="(sidebarOpen ? 'mr-3' : 'mr-0') + ' md:mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <span :class="(sidebarOpen ? 'block' : 'hidden') + ' md:block'">Applications</span>
+                                </a>
                                 <a href="{{ route('profile.edit') }}" wire:navigate wire:navigate.hover :class="sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 {{ request()->routeIs('profile.edit') ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                     <svg class="w-5 h-5 flex-shrink-0" :class="(sidebarOpen ? 'mr-3' : 'mr-0') + ' md:mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>

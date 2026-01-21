@@ -338,4 +338,65 @@ class SupabaseService
             return [];
         }
     }
+
+    /**
+     * Count job applications by status
+     */
+    public function countJobApplicationsByStatus(string $status = null): int
+    {
+        try {
+            $query = '/rest/v1/job_applications?select=id';
+            if ($status) {
+                $query .= "&status=eq.{$status}";
+            }
+            $response = $this->client->get($query);
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count job applications by status error', [
+                'status' => $status,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Get job applications with filters, search, and pagination
+     */
+    public function getJobApplications(array $filters = [], int $limit = 10, int $offset = 0): array
+    {
+        try {
+            $query = '/rest/v1/job_applications?select=id,first_name,last_name,email,phone,city,status,created_at,email_sent_at&order=created_at.desc';
+
+            $params = [];
+            if (!empty($filters['status']) && $filters['status'] !== 'all') {
+                $params[] = "status=eq.{$filters['status']}";
+            }
+            if (!empty($filters['search'])) {
+                $search = urlencode($filters['search']);
+                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+            }
+
+            if (!empty($params)) {
+                $query .= '&' . implode('&', $params);
+            }
+
+            $query .= "&limit={$limit}&offset={$offset}";
+
+            $response = $this->client->get($query);
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data ?? [];
+        } catch (RequestException $e) {
+            Log::error('Supabase get job applications error', [
+                'filters' => $filters,
+                'limit' => $limit,
+                'offset' => $offset,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return [];
+        }
+    }
 }
