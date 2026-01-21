@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Payout\Index as PayoutIndex;
@@ -35,11 +36,9 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->middleware('role.redirect')->name('dashboard');
+    })->name('dashboard');
 
-    Route::get('/admin', function () {
-        return view('admin.dashboard');
-    })->middleware('role.redirect')->name('admin.dashboard');
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/payout', function () {
         return view('payout');

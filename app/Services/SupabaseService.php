@@ -226,4 +226,98 @@ class SupabaseService
             return [];
         }
     }
+
+    /**
+     * Count total applications from job_applications table
+     */
+    public function countJobApplications(): int
+    {
+        try {
+            $response = $this->client->get('/rest/v1/job_applications?select=id');
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count job applications error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Count employees (profiles with role='employee')
+     */
+    public function countEmployees(): int
+    {
+        try {
+            $response = $this->client->get('/rest/v1/profiles?role=eq.employee&select=id');
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count employees error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Count KYC under review (profiles with kyc_status='under_review')
+     */
+    public function countKycUnderReview(): int
+    {
+        try {
+            $response = $this->client->get('/rest/v1/profiles?kyc_status=eq.under_review&select=id');
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count KYC under review error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Count task templates
+     */
+    public function countTaskTemplates(): int
+    {
+        try {
+            $response = $this->client->get('/rest/v1/task_templates?select=id');
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count task templates error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Sum current_balance from worker_balances table
+     */
+    public function sumWorkerBalances(): float
+    {
+        try {
+            $response = $this->client->get('/rest/v1/worker_balances?select=current_balance');
+            $data = json_decode($response->getBody()->getContents(), true);
+            $sum = 0;
+            foreach ($data as $balance) {
+                $sum += (float) ($balance['current_balance'] ?? 0);
+            }
+            return $sum;
+        } catch (RequestException $e) {
+            Log::error('Supabase sum worker balances error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
 }

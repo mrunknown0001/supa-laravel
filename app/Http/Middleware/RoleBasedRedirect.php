@@ -14,23 +14,52 @@ class RoleBasedRedirect
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
+    // public function handle(Request $request, Closure $next): Response
+    // {
+    //     if (Auth::check()) {
+    //         $user = Auth::user();
+
+    //         // Load profile if not already loaded
+    //         if (!$user->role) {
+    //             $user->loadProfileFromSupabase();
+    //         }
+
+    //         // Only enforce redirection for dashboard and admin routes
+    //         if ($request->is('admin*')) {
+    //             if ($user->role !== 'admin') {
+    //                 return redirect('/dashboard');
+    //             }
+    //         } elseif ($request->is('dashboard*')) {
+    //             if ($user->role === 'admin') {
+    //                 return redirect('/admin');
+    //             }
+    //         }
+    //     }
+
+    //     return $next($request);
+    // }
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
             $user = Auth::user();
-
-            // Load profile if not already loaded
             if (!$user->role) {
                 $user->loadProfileFromSupabase();
             }
 
-            // Only enforce redirection for dashboard and admin routes
+            $isAjax = $request->ajax() || $request->header('X-Livewire');
+
             if ($request->is('admin*')) {
                 if ($user->role !== 'admin') {
+                    if ($isAjax) {
+                        return response()->json(['error' => 'Unauthorized', 'redirect' => '/dashboard'], 403);
+                    }
                     return redirect('/dashboard');
                 }
             } elseif ($request->is('dashboard*')) {
                 if ($user->role === 'admin') {
+                    if ($isAjax) {
+                        return response()->json(['error' => 'Unauthorized', 'redirect' => '/admin'], 403);
+                    }
                     return redirect('/admin');
                 }
             }
@@ -38,4 +67,5 @@ class RoleBasedRedirect
 
         return $next($request);
     }
+
 }
