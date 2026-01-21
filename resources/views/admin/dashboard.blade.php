@@ -99,6 +99,44 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Latest Applications Card -->
+            <div class="mt-8">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Latest Applications</h3>
+                            <a href="#" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                View All Applications
+                            </a>
+                        </div>
+                        <div class="space-y-4">
+                            @forelse($latest_applications as $application)
+                                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Application #{{ $application['id'] }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Created: {{ \Carbon\Carbon::parse($application['created_at'])->format('M d, Y H:i') }}</p>
+                                        @if($application['status'] === 'approved' && $application['approved_at'])
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Approved: {{ \Carbon\Carbon::parse($application['approved_at'])->format('M d, Y H:i') }}</p>
+                                        @elseif($application['status'] === 'rejected' && $application['rejected_at'])
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Rejected: {{ \Carbon\Carbon::parse($application['rejected_at'])->format('M d, Y H:i') }}</p>
+                                        @endif
+                                    </div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        @if($application['status'] === 'pending') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                                        @elseif($application['status'] === 'approved') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                                        @elseif($application['status'] === 'rejected') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                                        @endif">
+                                        {{ ucfirst($application['status']) }}
+                                    </span>
+                                </div>
+                            @empty
+                                <p class="text-gray-500 dark:text-gray-400">No applications found.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </x-admin-app-layout>

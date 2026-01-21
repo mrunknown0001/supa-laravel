@@ -28,6 +28,7 @@ class AdminController extends Controller
             'kyc_checks' => $this->supabase->countKycUnderReview(),
             'total_balance' => $this->supabase->sumWorkerBalances(),
             'outstanding_payments' => 0,
+            'latest_applications' => $this->supabase->getLatestJobApplications(3),
         ];
 
         return view('admin.dashboard', $data);

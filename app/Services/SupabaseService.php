@@ -320,4 +320,22 @@ class SupabaseService
             return 0;
         }
     }
+
+    /**
+     * Get latest job applications
+     */
+    public function getLatestJobApplications(int $limit = 3): array
+    {
+        try {
+            $response = $this->client->get("/rest/v1/job_applications?select=id,status,approved_at,rejected_at,created_at&order=created_at.desc&limit={$limit}");
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data ?? [];
+        } catch (RequestException $e) {
+            Log::error('Supabase get latest job applications error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return [];
+        }
+    }
 }
