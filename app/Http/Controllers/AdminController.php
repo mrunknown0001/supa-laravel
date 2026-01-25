@@ -32,7 +32,7 @@ class AdminController extends Controller
             'latest_applications' => $this->supabase->getLatestJobApplications(3),
         ];
 
-        return Inertia::render('Admin/Dashboard', $data);
+        return Inertia::render('Admin/Dashboard/Index', $data);
     }
 
 }

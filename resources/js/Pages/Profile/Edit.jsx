@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
+import AdminAppLayout from '../../Layouts/AdminAppLayout';
 
 export default function Edit({ user }) {
+    const Layout = user.role === 'admin' ? AdminAppLayout : AppLayout;
+
     return (
-        <AppLayout>
+        <Layout>
             <ProfileEditContent user={user} />
-        </AppLayout>
+        </Layout>
     );
 }
 
