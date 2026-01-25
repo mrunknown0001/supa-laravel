@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
+        $middleware->replace(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class);
+
         $middleware->alias([
             'supabase.auth' => \App\Http\Middleware\SupabaseAuth::class,
             'role.redirect' => \App\Http\Middleware\RoleBasedRedirect::class,

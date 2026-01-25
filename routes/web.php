@@ -55,16 +55,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/confirm-password', [\App\Http\Controllers\Auth\ConfirmablePasswordController::class, 'store']);
 
     Route::post('/logout', function () {
-        // Debug logging for logout issue
-        \Log::info('Logout attempt', [
-            'csrf_token_in_request' => request()->header('X-CSRF-TOKEN') ?? request()->input('_token'),
-            'session_id' => session()->getId(),
-            'user_id' => auth()->id(),
-            'supabase_token' => session('supabase_access_token') ? 'present' : 'absent',
-            'request_method' => request()->method(),
-            'request_headers' => request()->headers->all(),
-        ]);
-
         // Handle logout via Supabase
         $token = session('supabase_access_token');
         if ($token) {

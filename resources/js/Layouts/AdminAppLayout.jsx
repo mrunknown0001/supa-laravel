@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import ApplicationLogo from '../Components/ApplicationLogo';
 import Dropdown from '../Components/Dropdown';
 import NavLink from '../Components/NavLink';
@@ -134,15 +134,12 @@ export default function AdminAppLayout({ children }) {
                                                     Profile
                                                 </Dropdown.Link>
 
-                                                <form method="POST" action={route('logout')} className="inline">
-                                                    <Dropdown.Link
-                                                        href={route('logout')}
-                                                        method="post"
-                                                        as="button"
-                                                    >
-                                                        Log Out
-                                                    </Dropdown.Link>
-                                                </form>
+                                                <Dropdown.Link
+                                                    // as="button"
+                                                    onClick={() => router.post(route('logout'))}
+                                                >
+                                                    Log Out
+                                                </Dropdown.Link>
                                             </Dropdown.Content>
                                         </Dropdown>
                                     ) : (
