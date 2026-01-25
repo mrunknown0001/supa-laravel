@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminApplicationsController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\ProfileController;
-use App\Livewire\Admin\Applications;
-use App\Livewire\Auth\Login;
-use App\Livewire\Payout\Index as PayoutIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,7 +13,8 @@ Route::get('/', function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', Login::class)->name('login');
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::post('/login', [LoginController::class, 'store']);
 
     // Password Reset Routes
     Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])
@@ -35,26 +37,17 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/applications', Applications::class)->name('admin.applications');
+    Route::get('/admin/applications', [AdminApplicationsController::class, 'index'])->middleware(['auth'])->name('admin.applications');
 
-    Route::get('/payout', function () {
-        return view('payout');
-    })->name('payout');
+    Route::get('/payout', [PayoutController::class, 'index'])->name('payout');
 
-    Route::get('/profile', function () {
-        $user = auth()->user();
-        $user->loadProfileFromSupabase();
-        return view('profile.edit', ['user' => $user]);
-    })->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/password', [ProfileController::class, 'changePassword'])->name('password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::put('/password', [\App\Http\Controllers\Auth\PasswordController::class, 'update'])->name('password.update');
 
     Route::get('/confirm-password', [\App\Http\Controllers\Auth\ConfirmablePasswordController::class, 'show'])
         ->name('password.confirm');
@@ -62,6 +55,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/confirm-password', [\App\Http\Controllers\Auth\ConfirmablePasswordController::class, 'store']);
 
     Route::post('/logout', function () {
+        // Debug logging for logout issue
+        \Log::info('Logout attempt', [
+            'csrf_token_in_request' => request()->header('X-CSRF-TOKEN') ?? request()->input('_token'),
+            'session_id' => session()->getId(),
+            'user_id' => auth()->id(),
+            'supabase_token' => session('supabase_access_token') ? 'present' : 'absent',
+            'request_method' => request()->method(),
+            'request_headers' => request()->headers->all(),
+        ]);
+
         // Handle logout via Supabase
         $token = session('supabase_access_token');
         if ($token) {
@@ -70,7 +73,7 @@ Route::middleware('auth')->group(function () {
         auth()->logout();
         session()->invalidate();
         session()->regenerateToken();
-        return redirect('/');
+        return redirect('/login');
     })->name('logout');
 });
 

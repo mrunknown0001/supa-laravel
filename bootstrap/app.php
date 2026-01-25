@@ -12,6 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
+
         $middleware->alias([
             'supabase.auth' => \App\Http\Middleware\SupabaseAuth::class,
             'role.redirect' => \App\Http\Middleware\RoleBasedRedirect::class,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\SupabaseService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AdminController extends Controller
 {
@@ -31,7 +32,7 @@ class AdminController extends Controller
             'latest_applications' => $this->supabase->getLatestJobApplications(3),
         ];
 
-        return view('admin.dashboard', $data);
+        return Inertia::render('Admin/Dashboard', $data);
     }
 
 }

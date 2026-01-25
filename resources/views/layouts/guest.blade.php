@@ -26,8 +26,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @livewireStyles
+        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     </head>
     <body class="font-sans text-gray-900 antialiased bg-gray-50 dark:bg-gray-900">
         <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">

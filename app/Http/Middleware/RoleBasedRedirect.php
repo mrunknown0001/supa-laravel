@@ -46,7 +46,7 @@ class RoleBasedRedirect
                 $user->loadProfileFromSupabase();
             }
 
-            $isAjax = $request->ajax() || $request->header('X-Livewire');
+            $isAjax = $request->ajax() || $request->header('X-Livewire') || $request->header('X-Inertia');
 
             if ($request->is('admin*')) {
                 if ($user->role !== 'admin') {
