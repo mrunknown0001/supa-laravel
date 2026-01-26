@@ -115,30 +115,30 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
             </div>
 
             {/* Filters and Search */}
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
+            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-0">
                 <div className="p-6">
-                    <form onSubmit={handleFilterSubmit} className="flex flex-col sm:flex-row gap-4">
+                    <form onSubmit={handleFilterSubmit} className="flex flex-wrap gap-4">
                         {/* Search */}
-                        <div className="flex-1">
-                            <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                            <label htmlFor="search" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Search</label>
                             <input
                                 type="text"
                                 id="search"
                                 value={localSearch}
                                 onChange={(e) => setLocalSearch(e.target.value)}
                                 placeholder="Search by name or email..."
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                             />
                         </div>
 
                         {/* Status Filter */}
-                        <div>
-                            <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                        <div className="flex items-center gap-2">
+                            <label htmlFor="status" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Status</label>
                             <select
                                 id="status"
                                 value={localStatus}
                                 onChange={(e) => setLocalStatus(e.target.value)}
-                                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+                                className="w-48 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                             >
                                 <option value="all">All Statuses</option>
                                 <option value="pending">Pending</option>
@@ -148,13 +148,13 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
                         </div>
 
                         {/* Per Page */}
-                        <div>
-                            <label htmlFor="perPage" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Per Page</label>
+                        <div className="flex items-center gap-2">
+                            <label htmlFor="perPage" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Per Page</label>
                             <select
                                 id="perPage"
                                 value={localPerPage}
                                 onChange={(e) => setLocalPerPage(parseInt(e.target.value))}
-                                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+                                className="w-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                             >
                                 <option value="10">10</option>
                                 <option value="20">20</option>
@@ -163,7 +163,7 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
                             </select>
                         </div>
 
-                        <div className="flex items-end">
+                        <div className="flex items-center">
                             <button
                                 type="submit"
                                 className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -174,32 +174,41 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
                     </form>
                 </div>
             </div>
-
-            {/* Applications Table */}
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="w-full">
+                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="w-full overflow-x-auto">
+                    <table className="w-full table-auto divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Applicant</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contact</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Received</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                Applicant
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                Contact
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                Status
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                Received
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             {applications.length > 0 ? applications.map((application) => (
                                 <tr key={application.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{application.first_name} {application.last_name}</div>
                                         <div className="text-sm text-gray-500 dark:text-gray-400">{application.city || 'N/A'}</div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm text-gray-900 dark:text-gray-100">{application.email}</div>
                                         <div className="text-sm text-gray-500 dark:text-gray-400">{application.phone || 'N/A'}</div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                             application.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                                             application.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
@@ -209,10 +218,10 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
                                             {application.email_sent_at && <span className="ml-1">📧</span>}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {formatDate(application.created_at)}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex space-x-2">
                                             <button className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +239,7 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    <td colSpan="5" className="px-4 sm:px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                         No applications found.
                                     </td>
                                 </tr>
@@ -310,6 +319,7 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
                         </div>
                     </div>
                 )}
+            </div>
             </div>
         </div>
     );

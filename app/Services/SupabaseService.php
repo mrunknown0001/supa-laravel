@@ -327,7 +327,7 @@ class SupabaseService
     public function getLatestJobApplications(int $limit = 3): array
     {
         try {
-            $response = $this->client->get("/rest/v1/job_applications?select=id,status,approved_at,rejected_at,created_at&order=created_at.desc&limit={$limit}");
+            $response = $this->client->get("/rest/v1/job_applications?select=id,first_name,last_name,status,approved_at,rejected_at,created_at&order=created_at.desc&limit={$limit}");
             $data = json_decode($response->getBody()->getContents(), true);
             return $data ?? [];
         } catch (RequestException $e) {
