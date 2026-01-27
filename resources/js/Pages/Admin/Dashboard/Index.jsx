@@ -27,15 +27,18 @@ export default function Index({ applications, employees, video_requests, active_
                                 </div>
                             </Link>
 
-                        <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border">
-                            <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">
-                            Employees
-                            </h3>
-                            <p className="text-2xl font-bold text-green-600 dark:text-green-300">
-                            {employees}
-                            </p>
-                        </div>
-
+                        <Link
+                                href={route('admin.employees')}
+                            >
+                            <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border">
+                                <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">
+                                Employees
+                                </h3>
+                                <p className="text-2xl font-bold text-green-600 dark:text-green-300">
+                                {employees}
+                                </p>
+                            </div>
+                        </Link>
                         <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg border">
                             <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">
                             KYC Checks
