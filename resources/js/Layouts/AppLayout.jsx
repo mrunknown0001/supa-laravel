@@ -8,11 +8,16 @@ import FlashMessage from '../Components/FlashMessage';
 export default function AppLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
-    const { auth, supabase } = usePage().props;
+
+    const page = usePage();
+    const { auth, supabase } = page.props;
+    const { url } = page; // ✅ current url/path from Inertia
 
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
-        const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const isDark =
+            savedTheme === 'dark' ||
+            (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
         setDarkMode(isDark);
     }, []);
 
@@ -26,8 +31,19 @@ export default function AppLayout({ children }) {
         }
     }, [darkMode]);
 
-    const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
+    const toggleDarkMode = () => setDarkMode(!darkMode);
+
+    /**
+     * ✅ Reliable active checker for Inertia + Ziggy:
+     * checks current URL against the route URL
+     */
+    const isActiveRoute = (routeName) => {
+        try {
+            const targetUrl = new URL(route(routeName), window.location.origin);
+            return url === targetUrl.pathname || url.startsWith(targetUrl.pathname + '/');
+        } catch (e) {
+            return false;
+        }
     };
 
     return (
@@ -42,9 +58,11 @@ export default function AppLayout({ children }) {
                 )}
 
                 {/* Sidebar */}
-                <aside className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out fixed inset-y-0 left-0 z-50 min-h-screen ${
-                    sidebarOpen ? 'block w-64' : 'hidden md:block w-64'
-                }`}>
+                <aside
+                    className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out fixed inset-y-0 left-0 z-50 min-h-screen ${
+                        sidebarOpen ? 'block w-64' : 'hidden md:block w-64'
+                    }`}
+                >
                     <div className="flex flex-col h-full">
                         {/* Sidebar Header */}
                         <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700 h-16">
@@ -66,11 +84,21 @@ export default function AppLayout({ children }) {
                             >
                                 {sidebarOpen ? (
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                                        />
                                     </svg>
                                 ) : (
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                                        />
                                     </svg>
                                 )}
                             </button>
@@ -82,35 +110,82 @@ export default function AppLayout({ children }) {
                                 <>
                                     <NavLink
                                         href={route('dashboard')}
-                                        active={route().current('dashboard')}
+                                        active={isActiveRoute('dashboard')} // ✅ fixed
                                         className={sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'}
                                     >
-                                        <svg className={`w-5 h-5 flex-shrink-0 ${sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
+                                        <svg
+                                            className={`w-5 h-5 flex-shrink-0 ${
+                                                sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'
+                                            }`}
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                                            />
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"
+                                            />
                                         </svg>
-                                        <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>Dashboard</span>
+                                        <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>
+                                            Dashboard
+                                        </span>
                                     </NavLink>
+
                                     <NavLink
                                         href={route('payout')}
-                                        active={route().current('payout')}
+                                        active={isActiveRoute('payout')} // ✅ fixed
                                         className={sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'}
                                     >
-                                        <svg className={`w-5 h-5 flex-shrink-0 ${sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        <svg
+                                            className={`w-5 h-5 flex-shrink-0 ${
+                                                sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'
+                                            }`}
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                                            />
                                         </svg>
-                                        <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>Payout</span>
+                                        <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>
+                                            Payout
+                                        </span>
                                     </NavLink>
                                 </>
                             )}
+
                             {auth?.user && (
                                 <NavLink
                                     href={route('profile.edit')}
-                                    active={route().current('profile.edit')}
+                                    active={isActiveRoute('profile.edit')} // ✅ fixed
                                     className={sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'}
                                 >
-                                    <svg className={`w-5 h-5 flex-shrink-0 ${sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    <svg
+                                        className={`w-5 h-5 flex-shrink-0 ${
+                                            sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'
+                                        }`}
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                        />
                                     </svg>
                                     <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>Profile</span>
                                 </NavLink>
@@ -165,15 +240,24 @@ export default function AppLayout({ children }) {
 
                                     {/* KYC Status */}
                                     {auth?.user && auth.user.role !== 'admin' && (
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-4 ${
-                                            auth.user.kyc_status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
-                                            auth.user.kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
-                                            auth.user.kyc_status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' :
-                                            'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
-                                        }`}>
-                                            {auth.user.kyc_status === 'approved' ? 'Verified' :
-                                             auth.user.kyc_status === 'pending' ? 'Pending' :
-                                             auth.user.kyc_status === 'rejected' ? 'Rejected' : 'Unknown'}
+                                        <span
+                                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-4 ${
+                                                auth.user.kyc_status === 'approved'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                                                    : auth.user.kyc_status === 'pending'
+                                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+                                                    : auth.user.kyc_status === 'rejected'
+                                                    ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                                                    : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+                                            }`}
+                                        >
+                                            {auth.user.kyc_status === 'approved'
+                                                ? 'Verified'
+                                                : auth.user.kyc_status === 'pending'
+                                                ? 'Pending'
+                                                : auth.user.kyc_status === 'rejected'
+                                                ? 'Rejected'
+                                                : 'Unknown'}
                                         </span>
                                     )}
 
@@ -191,14 +275,9 @@ export default function AppLayout({ children }) {
                                             </Dropdown.Trigger>
 
                                             <Dropdown.Content>
-                                                <Dropdown.Link href={route('profile.edit')}>
-                                                    Profile
-                                                </Dropdown.Link>
+                                                <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
 
-                                                <Dropdown.Link
-                                                    // as="button"
-                                                    onClick={() => router.post(route('logout'))}
-                                                >
+                                                <Dropdown.Link onClick={() => router.post(route('logout'))}>
                                                     Log Out
                                                 </Dropdown.Link>
                                             </Dropdown.Content>
