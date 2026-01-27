@@ -10,20 +10,32 @@ use Illuminate\Support\Facades\Log;
 class SupabaseService
 {
     protected Client $client;
+    protected Client $adminClient;
     protected string $baseUrl;
     protected string $anonKey;
+    protected string $serviceKey;
     protected int $cacheTtl = 3600; // 1 hour
 
     public function __construct()
     {
         $this->baseUrl = config('services.supabase.url');
         $this->anonKey = config('services.supabase.anon_key');
+        $this->serviceKey = config('services.supabase.service_key', $this->anonKey); // fallback to anon if not set
 
         $this->client = new Client([
             'base_uri' => $this->baseUrl,
             'headers' => [
                 'apikey' => $this->anonKey,
                 'Authorization' => 'Bearer ' . $this->anonKey,
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+
+        $this->adminClient = new Client([
+            'base_uri' => $this->baseUrl,
+            'headers' => [
+                'apikey' => $this->serviceKey,
+                'Authorization' => 'Bearer ' . $this->serviceKey,
                 'Content-Type' => 'application/json',
             ],
         ]);
@@ -438,6 +450,135 @@ class SupabaseService
                 'response' => $e->getResponse()?->getBody()->getContents(),
             ]);
             return [];
+        }
+    }
+
+    /**
+     * Count profiles with filters
+     */
+    public function countProfiles(array $filters = []): int
+    {
+        try {
+            $query = '/rest/v1/profiles?select=id';
+
+            $params = [];
+            if (!empty($filters['role']) && $filters['role'] !== 'all') {
+                $params[] = "role=eq.{$filters['role']}";
+            }
+            if (!empty($filters['status']) && $filters['status'] !== 'all') {
+                if ($filters['status'] === 'active') {
+                    $params[] = "banned_until=is.null";
+                } elseif ($filters['status'] === 'inactive') {
+                    $params[] = "banned_until=not.is.null";
+                }
+            }
+            if (!empty($filters['search'])) {
+                $search = urlencode($filters['search']);
+                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+            }
+
+            if (!empty($params)) {
+                $query .= '&' . implode('&', $params);
+            }
+
+            $response = $this->client->get($query);
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count profiles error', [
+                'filters' => $filters,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Get profiles with filters, search, and pagination
+     */
+    public function getProfiles(array $filters = [], int $limit = 10, int $offset = 0): array
+    {
+        try {
+            $query = '/rest/v1/profiles?select=id,first_name,last_name,email,role,banned_until,payment_mode&order=created_at.desc';
+
+            $params = [];
+            if (!empty($filters['role']) && $filters['role'] !== 'all') {
+                $params[] = "role=eq.{$filters['role']}";
+            }
+            if (!empty($filters['status']) && $filters['status'] !== 'all') {
+                if ($filters['status'] === 'active') {
+                    $params[] = "banned_until=is.null";
+                } elseif ($filters['status'] === 'inactive') {
+                    $params[] = "banned_until=not.is.null";
+                }
+            }
+            if (!empty($filters['search'])) {
+                $search = urlencode($filters['search']);
+                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+            }
+
+            if (!empty($params)) {
+                $query .= '&' . implode('&', $params);
+            }
+
+            $query .= "&limit={$limit}&offset={$offset}";
+
+            $response = $this->client->get($query);
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data ?? [];
+        } catch (RequestException $e) {
+            Log::error('Supabase get profiles error', [
+                'filters' => $filters,
+                'limit' => $limit,
+                'offset' => $offset,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return [];
+        }
+    }
+
+    /**
+     * Get worker balances for multiple worker ids
+     */
+    public function getWorkerBalances(array $workerIds): array
+    {
+        if (empty($workerIds)) {
+            return [];
+        }
+
+        try {
+            $ids = implode(',', $workerIds);
+            $response = $this->client->get("/rest/v1/worker_balances?worker_id=in.({$ids})");
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data ?? [];
+        } catch (RequestException $e) {
+            Log::error('Supabase get worker balances error', [
+                'worker_ids' => $workerIds,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return [];
+        }
+    }
+
+    /**
+     * Get user email from Supabase auth
+     */
+    public function getUserEmail(string $userId): ?string
+    {
+        try {
+            $response = $this->adminClient->get("/auth/v1/admin/users/{$userId}");
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data['email'] ?? null;
+        } catch (RequestException $e) {
+            Log::error('Supabase get user email error', [
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return null;
         }
     }
 }

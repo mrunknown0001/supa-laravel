@@ -1,0 +1,33 @@
+profiles table
+id
+role
+created_at
+upldated_at
+first_name
+last_name
+street
+postal_code
+city
+nationality
+date_of_birth
+contract_id
+contract_signed_at
+email
+banned_until
+iban
+bic
+recipient_name
+tax_number
+social_security_number
+health_insurance
+kyc_status
+kyc_verified_at
+kyc_documents (json)
+status_manually_set (boolean)
+payment_mode 
+payment_mode_set_at
+payment_mode_set_by
+kyc_id_card_front_url
+kyc_password_photo_url
+kyc_drivers_license_back_url
+kyc_proof_address_url
