@@ -399,4 +399,45 @@ class SupabaseService
             return [];
         }
     }
+
+    /**
+     * Get task templates with filters, search, and pagination
+     */
+    public function getTaskTemplates(array $filters = [], int $limit = 10, int $offset = 0): array
+    {
+        try {
+            $query = '/rest/v1/task_templates?select=id,title,description,type,payment_amount,priority,estimated_hours,steps,required_attachments,is_starter_job,play_store_url,app_store_url,created_at,updated_at&order=created_at.desc';
+
+            $params = [];
+            if (!empty($filters['type']) && $filters['type'] !== 'all') {
+                $params[] = "type=eq.{$filters['type']}";
+            }
+            if (!empty($filters['priority']) && $filters['priority'] !== 'all') {
+                $params[] = "priority=eq.{$filters['priority']}";
+            }
+            if (!empty($filters['search'])) {
+                $search = urlencode($filters['search']);
+                $params[] = "or=(title.ilike.%{$search}%,description.ilike.%{$search}%)";
+            }
+
+            if (!empty($params)) {
+                $query .= '&' . implode('&', $params);
+            }
+
+            $query .= "&limit={$limit}&offset={$offset}";
+
+            $response = $this->client->get($query);
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data ?? [];
+        } catch (RequestException $e) {
+            Log::error('Supabase get task templates error', [
+                'filters' => $filters,
+                'limit' => $limit,
+                'offset' => $offset,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return [];
+        }
+    }
 }

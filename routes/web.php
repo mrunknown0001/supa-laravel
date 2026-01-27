@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminApplicationsController;
+use App\Http\Controllers\Admin\AdminTaskTemplatesController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/applications', [AdminApplicationsController::class, 'index'])->middleware(['auth'])->name('admin.applications');
+    Route::get('/admin/task-templates', [AdminTaskTemplatesController::class, 'index'])->middleware(['auth'])->name('admin.task-templates');
 
     Route::get('/payout', [PayoutController::class, 'index'])->name('payout');
 

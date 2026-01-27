@@ -91,6 +91,16 @@ export default function AdminAppLayout({ children }) {
                                         </svg>
                                         <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>Applications</span>
                                     </NavLink>
+                                    <NavLink
+                                        href={route('admin.task-templates')}
+                                        active={route().current('admin.task-templates')}
+                                        className={sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'}
+                                    >
+                                        <svg className={`w-5 h-5 flex-shrink-0 ${sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                        </svg>
+                                        <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>Task Templates</span>
+                                    </NavLink>
                                 </>
                             )}
                             {auth?.user && (
