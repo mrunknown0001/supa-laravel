@@ -81,7 +81,7 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
     };
 
     return (
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-8">
+        <div className="px-4 sm:px-6 lg:px-8 mt-8">
             {/* Filters and Search */}
             <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-8">
                 <div className="p-6">
