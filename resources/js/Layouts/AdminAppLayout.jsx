@@ -48,9 +48,16 @@ export default function AdminAppLayout({ children }) {
                     <div className="flex flex-col h-full">
                         {/* Sidebar Header */}
                         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 h-16">
-                            <ApplicationLogo className={`w-8 h-8 text-gray-800 dark:text-gray-200 ${
-                                sidebarOpen ? 'block' : 'hidden md:block'
-                            }`} />
+                            <div className="flex items-center gap-2">
+                                <ApplicationLogo
+                                    className={`w-8 h-8 text-gray-800 dark:text-gray-200 ${
+                                        sidebarOpen ? 'block' : 'hidden md:block'
+                                    }`}
+                                />
+                                <span className="dark:text-white text-gray-900">
+                                    {supabase?.companyName || 'Company'}
+                                </span>
+                            </div>
                             <button
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
                                 className="p-1 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
