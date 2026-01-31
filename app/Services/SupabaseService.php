@@ -581,4 +581,123 @@ class SupabaseService
             return null;
         }
     }
+
+    /**
+     * Count total users (profiles)
+     */
+    public function countUsers(): int
+    {
+        try {
+            $response = $this->client->get('/rest/v1/profiles?select=id');
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count users error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Count users by KYC status
+     */
+    public function countUsersByKycStatus(string $status = null): int
+    {
+        try {
+            $query = '/rest/v1/profiles?select=id';
+            if ($status) {
+                $query .= "&kyc_status=eq.{$status}";
+            }
+            $response = $this->client->get($query);
+            $data = json_decode($response->getBody()->getContents(), true);
+            return count($data);
+        } catch (RequestException $e) {
+            Log::error('Supabase count users by KYC status error', [
+                'status' => $status,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Get users with KYC data, filters, search, and pagination
+     */
+    public function getUsersWithKyc(array $filters = [], int $limit = 10, int $offset = 0): array
+    {
+        try {
+            $query = '/rest/v1/profiles?select=id,first_name,last_name,email,kyc_status,kyc_verified_at,kyc_documents,kyc_id_card_front_url,kyc_password_photo_url,kyc_drivers_license_back_url,kyc_proof_address_url&order=created_at.desc';
+
+            $params = [];
+            if (!empty($filters['status']) && $filters['status'] !== 'all') {
+                $params[] = "kyc_status=eq.{$filters['status']}";
+            }
+            if (!empty($filters['search'])) {
+                $search = urlencode($filters['search']);
+                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+            }
+
+            if (!empty($params)) {
+                $query .= '&' . implode('&', $params);
+            }
+
+            $query .= "&limit={$limit}&offset={$offset}";
+
+            Log::info('Supabase getUsersWithKyc query', [
+                'query' => $query,
+                'filters' => $filters,
+                'limit' => $limit,
+                'offset' => $offset,
+            ]);
+
+            $response = $this->client->get($query);
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            Log::info('Supabase getUsersWithKyc response', [
+                'data_count' => count($data ?? []),
+                'data' => $data,
+            ]);
+
+            return $data ?? [];
+        } catch (RequestException $e) {
+            Log::error('Supabase get users with KYC error', [
+                'filters' => $filters,
+                'limit' => $limit,
+                'offset' => $offset,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return [];
+        }
+    }
+
+    /**
+     * Update KYC status for a user
+     */
+    public function updateKycStatus(string $userId, string $status): bool
+    {
+        try {
+            $updateData = [
+                'kyc_status' => $status,
+                'kyc_verified_at' => now()->toISOString(),
+                'status_manually_set' => true,
+            ];
+
+            $response = $this->client->patch("/rest/v1/profiles?id=eq.{$userId}", [
+                'json' => $updateData,
+            ]);
+            return $response->getStatusCode() === 204;
+        } catch (RequestException $e) {
+            Log::error('Supabase update KYC status error', [
+                'user_id' => $userId,
+                'status' => $status,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return false;
+        }
+    }
 }

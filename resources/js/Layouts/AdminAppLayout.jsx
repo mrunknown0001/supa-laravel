@@ -118,6 +118,16 @@ export default function AdminAppLayout({ children }) {
                                         </svg>
                                         <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>Employees</span>
                                     </NavLink>
+                                    <NavLink
+                                        href={route('admin.kyc')}
+                                        active={route().current('admin.kyc')}
+                                        className={sidebarOpen ? 'justify-start' : 'justify-center md:justify-start'}
+                                    >
+                                        <svg className={`w-5 h-5 flex-shrink-0 ${sidebarOpen ? 'mr-3' : 'mr-0 md:mr-3'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span className={`${sidebarOpen ? 'block' : 'hidden md:block'}`}>KYC Check</span>
+                                    </NavLink>
                                 </>
                             )}
                             {auth?.user && (

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminApplicationsController;
 use App\Http\Controllers\Admin\AdminEmployeesController;
+use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Admin\AdminTaskTemplatesController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
@@ -45,6 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/applications', [AdminApplicationsController::class, 'index'])->middleware(['auth'])->name('admin.applications');
     Route::get('/admin/employees', [AdminEmployeesController::class, 'index'])->middleware(['auth'])->name('admin.employees');
     Route::get('/admin/task-templates', [AdminTaskTemplatesController::class, 'index'])->middleware(['auth'])->name('admin.task-templates');
+    Route::get('/admin/kyc', [AdminKycController::class, 'index'])->middleware(['auth'])->name('admin.kyc');
+    Route::post('/admin/kyc/{userId}/update-status', [AdminKycController::class, 'updateKycStatus'])->middleware(['auth'])->name('admin.kyc.update-status');
 
     Route::get('/payout', [PayoutController::class, 'index'])->name('payout');
 
