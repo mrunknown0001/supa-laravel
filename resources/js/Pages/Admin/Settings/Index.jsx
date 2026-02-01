@@ -305,71 +305,123 @@ function SettingsContent({ settings, chatSettings, kycStats }) {
                         {/* LOGO & FAVICON TAB */}
                         {activeTab === 'logo' && (
                             <div className="space-y-8">
-                                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Logo & Favicon</h2>
-                                
+                                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                    Logo & Favicon
+                                </h2>
+
                                 {/* Logo */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">logo</label>
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                        <div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Upload Logo</p>
-                                            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
-                                                <input type="file" accept="image/*" className="hidden" id="logo-upload" />
-                                                <label htmlFor="logo-upload" className="cursor-pointer">
-                                                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Click to upload or drag and drop</p>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">PNG, JPG, SVG up to 2MB</p>
-                                                </label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                                        Logo
+                                    </label>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                                        {/* Current Logo */}
+                                        <div className="flex flex-col">
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Current Logo</p>
+
+                                            <div className="border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 flex-1 min-h-[220px] flex items-center justify-center p-4">
+                                                {settings?.logo_url ? (
+                                                    <img src={settings.logo_url} alt="Logo" className="max-h-24 w-auto" />
+                                                ) : (
+                                                    <p className="text-sm text-gray-500">No logo uploaded</p>
+                                                )}
                                             </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Current Logo</p>
-                                            {settings?.logo_url ? (
-                                                <div className="flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-                                                    <img src={settings.logo_url} alt="Logo" className="max-h-24 w-auto" />
+
+                                        {/* Upload Logo */}
+                                        <div className="flex flex-col">
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Upload Logo</p>
+
+                                            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center flex-1 min-h-[220px] flex items-center justify-center">
+                                                <div>
+                                                    <input type="file" accept="image/*" className="hidden" id="logo-upload" />
+                                                    <label htmlFor="logo-upload" className="cursor-pointer block">
+                                                        <svg
+                                                            style={{ width: "50px", height: "50px" }}
+                                                            className="mx-auto text-gray-400"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                            />
+                                                        </svg>
+
+                                                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                                            Click to upload or drag and drop
+                                                        </p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                                            PNG, JPG, SVG up to 2MB
+                                                        </p>
+                                                    </label>
                                                 </div>
-                                            ) : (
-                                                <div className="flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-lg p-8 bg-gray-50 dark:bg-gray-900">
-                                                    <p className="text-sm text-gray-500">No logo uploaded</p>
-                                                </div>
-                                            )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+
                                 {/* Favicon */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Favicon</label>
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                        <div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Upload Favicon</p>
-                                            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
-                                                <input type="file" accept="image/*" className="hidden" id="favicon-upload" />
-                                                <label htmlFor="favicon-upload" className="cursor-pointer">
-                                                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Click to upload or drag and drop</p>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">ICO, PNG (32x32 or 64x64)</p>
-                                                </label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                                        Favicon
+                                    </label>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                                        {/* Current */}
+                                        <div className="flex flex-col">
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Current Favicon</p>
+
+                                            <div className="border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 flex-1 min-h-[220px] flex items-center justify-center p-4">
+                                                {settings?.favicon_url ? (
+                                                    <img src={settings.favicon_url} alt="Favicon" className="h-16 w-16" />
+                                                ) : (
+                                                    <p className="text-sm text-gray-500">No favicon uploaded</p>
+                                                )}
                                             </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Current Favicon</p>
-                                            {settings?.favicon_url ? (
-                                                <div className="flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-                                                    <img src={settings.favicon_url} alt="Favicon" className="h-16 w-16" />
+
+                                        {/* Upload */}
+                                        <div className="flex flex-col">
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Upload Favicon</p>
+
+                                            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center flex-1 min-h-[220px] flex items-center justify-center">
+                                                <div>
+                                                    <input type="file" accept="image/*" className="hidden" id="favicon-upload" />
+                                                    <label htmlFor="favicon-upload" className="cursor-pointer block">
+                                                        <svg
+                                                            style={{ width: "50px", height: "50px" }}
+                                                            className="mx-auto text-gray-400"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                            />
+                                                        </svg>
+
+                                                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                                            Click to upload or drag and drop
+                                                        </p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                                            ICO, PNG (32x32 or 64x64)
+                                                        </p>
+                                                    </label>
                                                 </div>
-                                            ) : (
-                                                <div className="flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-lg p-8 bg-gray-50 dark:bg-gray-900">
-                                                    <p className="text-sm text-gray-500">No favicon uploaded</p>
-                                                </div>
-                                            )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         )}
 

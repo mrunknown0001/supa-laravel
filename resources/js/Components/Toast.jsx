@@ -32,7 +32,7 @@ export default function Toast({ type = 'success', message, onClose, duration = 5
         <div
             style={{
                 position: 'fixed',
-                top: '80px',
+                top: '20px',
                 right: '20px',
                 zIndex: 99999,
                 backgroundColor: bg,
