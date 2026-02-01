@@ -123,6 +123,101 @@ class SupabaseService
     }
 
     /**
+     * Get chat manager settings
+     */
+    public function getChatManagerSettings(): ?array
+    {
+        try {
+            $response = $this->client->get('/rest/v1/chat_manager_settings?limit=1');
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data[0] ?? null;
+        } catch (RequestException $e) {
+            Log::error('Supabase get chat manager settings error', [
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Update settings
+     */
+    public function updateSettings(array $settingsData): bool
+    {
+        try {
+            // Get current settings to get the ID
+            $settings = $this->getSettings();
+            if (empty($settings)) {
+                return false;
+            }
+            
+            $settingsId = $settings[0]['id'];
+            
+            // Update only provided fields
+            $updateData = array_filter($settingsData, function($key) {
+                return !in_array($key, ['chat_enabled', 'manager_name', 'manager_title', 'manager_bio', 'manager_avatar_url', 'is_active']);
+            }, ARRAY_FILTER_USE_KEY);
+            
+            $updateData['updated_at'] = now()->toISOString();
+            
+            $response = $this->client->patch("/rest/v1/settings?id=eq.{$settingsId}", [
+                'json' => $updateData,
+            ]);
+            
+            // Clear cache after update
+            $this->clearSettingsCache();
+            
+            return $response->getStatusCode() === 204;
+        } catch (RequestException $e) {
+            Log::error('Supabase update settings error', [
+                'settings_data' => $settingsData,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Update chat manager settings
+     */
+    public function updateChatManagerSettings(array $chatData): bool
+    {
+        try {
+            // Get current chat settings to get the ID
+            $chatSettings = $this->getChatManagerSettings();
+            
+            if (!$chatSettings) {
+                // Create new chat settings if none exist
+                $response = $this->client->post('/rest/v1/chat_manager_settings', [
+                    'json' => array_merge($chatData, [
+                        'created_at' => now()->toISOString(),
+                        'updated_at' => now()->toISOString(),
+                    ]),
+                ]);
+                return $response->getStatusCode() === 201;
+            }
+            
+            $chatId = $chatSettings['id'];
+            $chatData['updated_at'] = now()->toISOString();
+            
+            $response = $this->client->patch("/rest/v1/chat_manager_settings?id=eq.{$chatId}", [
+                'json' => $chatData,
+            ]);
+            
+            return $response->getStatusCode() === 204;
+        } catch (RequestException $e) {
+            Log::error('Supabase update chat manager settings error', [
+                'chat_data' => $chatData,
+                'error' => $e->getMessage(),
+                'response' => $e->getResponse()?->getBody()->getContents(),
+            ]);
+            return false;
+        }
+    }
+
+    /**
      * Get settings with filters (bypasses cache)
      */
     public function getSettingsWithFilters(array $filters): array
@@ -387,8 +482,8 @@ class SupabaseService
                 $params[] = "status=eq.{$filters['status']}";
             }
             if (!empty($filters['search'])) {
-                $search = urlencode($filters['search']);
-                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+                $search = $filters['search'];  // No urlencode needed for ilike patterns
+                $params[] = "or=(first_name.ilike.*{$search}*,last_name.ilike.*{$search}*,email.ilike.*{$search}*)";
             }
 
             if (!empty($params)) {
@@ -428,8 +523,8 @@ class SupabaseService
                 $params[] = "priority=eq.{$filters['priority']}";
             }
             if (!empty($filters['search'])) {
-                $search = urlencode($filters['search']);
-                $params[] = "or=(title.ilike.%{$search}%,description.ilike.%{$search}%)";
+                $search = $filters['search'];  // No urlencode needed for ilike patterns
+                $params[] = "or=(title.ilike.*{$search}*,description.ilike.*{$search}*)";
             }
 
             if (!empty($params)) {
@@ -473,8 +568,8 @@ class SupabaseService
                 }
             }
             if (!empty($filters['search'])) {
-                $search = urlencode($filters['search']);
-                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+                $search = $filters['search'];  // No urlencode needed for ilike patterns
+                $params[] = "or=(first_name.ilike.*{$search}*,last_name.ilike.*{$search}*,email.ilike.*{$search}*)";
             }
 
             if (!empty($params)) {
@@ -514,8 +609,8 @@ class SupabaseService
                 }
             }
             if (!empty($filters['search'])) {
-                $search = urlencode($filters['search']);
-                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+                $search = $filters['search'];  // No urlencode needed for ilike patterns
+                $params[] = "or=(first_name.ilike.*{$search}*,last_name.ilike.*{$search}*,email.ilike.*{$search}*)";
             }
 
             if (!empty($params)) {
@@ -601,6 +696,33 @@ class SupabaseService
     }
 
     /**
+     * Get KYC statistics
+     */
+    public function getKycStatistics(): array
+    {
+        try {
+            return [
+                'total' => $this->countUsers(),
+                'pending' => $this->countUsersByKycStatus('pending'),
+                'approved' => $this->countUsersByKycStatus('approved'),
+                'rejected' => $this->countUsersByKycStatus('rejected'),
+                'under_review' => $this->countUsersByKycStatus('under_review'),
+            ];
+        } catch (RequestException $e) {
+            Log::error('Supabase get KYC statistics error', [
+                'error' => $e->getMessage(),
+            ]);
+            return [
+                'total' => 0,
+                'pending' => 0,
+                'approved' => 0,
+                'rejected' => 0,
+                'under_review' => 0,
+            ];
+        }
+    }
+
+    /**
      * Count users by KYC status
      */
     public function countUsersByKycStatus(string $status = null): int
@@ -629,15 +751,15 @@ class SupabaseService
     public function getUsersWithKyc(array $filters = [], int $limit = 10, int $offset = 0): array
     {
         try {
-            $query = '/rest/v1/profiles?select=id,first_name,last_name,email,kyc_status,kyc_verified_at,kyc_documents,kyc_id_card_front_url,kyc_password_photo_url,kyc_drivers_license_back_url,kyc_proof_address_url&order=created_at.desc';
+            $query = '/rest/v1/profiles?select=id,first_name,last_name,email,kyc_status,kyc_verified_at,kyc_documents,kyc_id_card_front_url,kyc_id_card_back_url,kyc_passport_photo_url,kyc_drivers_license_front_url,kyc_drivers_license_back_url,kyc_proof_address_url&order=created_at.desc';
 
             $params = [];
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $params[] = "kyc_status=eq.{$filters['status']}";
             }
             if (!empty($filters['search'])) {
-                $search = urlencode($filters['search']);
-                $params[] = "or=(first_name.ilike.%{$search}%,last_name.ilike.%{$search}%,email.ilike.%{$search}%)";
+                $search = $filters['search'];  // No urlencode needed for ilike patterns
+                $params[] = "or=(first_name.ilike.*{$search}*,last_name.ilike.*{$search}*,email.ilike.*{$search}*)";
             }
 
             if (!empty($params)) {

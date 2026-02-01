@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import AdminAppLayout from '../../../Layouts/AdminAppLayout';
 
@@ -27,6 +27,16 @@ function KycContent({ users, statusCounts, totals, search, status, perPage, page
     const [currentPerPage, setCurrentPerPage] = useState(perPage ?? 10);
     const [currentPage, setCurrentPage] = useState(page ?? 1);
 
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (currentSearch !== search) {
+                submitQuery({ search: currentSearch, page: 1 });
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [currentSearch]);
+
     const submitQuery = (override = {}) => {
         router.get(
             route('admin.kyc'),
@@ -39,7 +49,7 @@ function KycContent({ users, statusCounts, totals, search, status, perPage, page
             },
             {
                 preserveState: true,
-                replace: true,
+                preserveScroll: true,
             }
         );
     };
@@ -102,16 +112,28 @@ function KycContent({ users, statusCounts, totals, search, status, perPage, page
 
     const handleStatusChange = (newStatus) => {
         setCurrentStatus(newStatus);
-        router.get(route('admin.kyc'), { status: newStatus, search: currentSearch, perPage: currentPerPage, page: 1 });
+        submitQuery({ status: newStatus, page: 1 });
     };
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
-        router.get(route('admin.kyc'), { status: currentStatus, search: currentSearch, perPage: currentPerPage, page: newPage });
+        submitQuery({ page: newPage });
     };
 
-    const handleSearchSubmit = (e) => { e.preventDefault(); router.get(route('admin.kyc'), { status: currentStatus, search: currentSearch, perPage: currentPerPage, page: 1 }); };
-    const handlePerPageChange = (e) => { const newPerPage = parseInt(e.target.value); setCurrentPerPage(newPerPage); router.get(route('admin.kyc'), { status: currentStatus, search: currentSearch, perPage: newPerPage, page: 1 }); };
+    const handlePerPageChange = (newPerPage) => {
+        setCurrentPerPage(parseInt(newPerPage));
+        submitQuery({ perPage: parseInt(newPerPage), page: 1 });
+    };
+
+    const handleClearFilters = () => {
+        setCurrentSearch('');
+        setCurrentStatus('all');
+        setCurrentPerPage(10);
+        setCurrentPage(1);
+        router.get(route('admin.kyc'), { status: 'all', search: '', perPage: 10, page: 1 }, { preserveState: true, preserveScroll: true });
+    };
+
+    const hasActiveFilters = currentSearch !== '' || currentStatus !== 'all' || currentPerPage !== 10;
 
     const openModal = (user) => {
         setSelectedUser(user);
@@ -230,30 +252,34 @@ function KycContent({ users, statusCounts, totals, search, status, perPage, page
                                 </div>
                             </div>
 
-                            {/* RIGHT: Search + Per Page */}
+                            {/* RIGHT: Search + Per Page + Clear */}
                             <div className="w-full lg:w-auto flex flex-row items-center gap-3 flex-wrap sm:flex-nowrap">
 
                                 {/* Search */}
-                                <form onSubmit={handleSearchSubmit} className="flex flex-1 min-w-[220px]">
+                                <div className="flex flex-1 min-w-[220px] relative">
                                     <input
                                         type="text"
                                         value={currentSearch}
                                         onChange={(e) => setCurrentSearch(e.target.value)}
                                         placeholder="Search users..."
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-white"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-white"
                                     />
-                                    <button
-                                        type="submit"
-                                        className="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 whitespace-nowrap"
-                                    >
-                                        Search
-                                    </button>
-                                </form>
+                                    {currentSearch && (
+                                        <button
+                                            onClick={() => setCurrentSearch('')}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    )}
+                                </div>
 
                                 {/* Per Page */}
                                 <select
                                     value={currentPerPage}
-                                    onChange={handlePerPageChange}
+                                    onChange={(e) => handlePerPageChange(e.target.value)}
                                     className="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-white whitespace-nowrap"
                                 >
                                     <option value={10}>10 per page</option>
@@ -262,9 +288,35 @@ function KycContent({ users, statusCounts, totals, search, status, perPage, page
                                     <option value={0}>All</option>
                                 </select>
 
+                                {/* Clear Filters */}
+                                {hasActiveFilters && (
+                                    <button
+                                        onClick={handleClearFilters}
+                                        className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center gap-2 whitespace-nowrap"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Clear Filters
+                                    </button>
+                                )}
+
                             </div>
 
                         </div>
+
+                        {/* Active Filters Badge */}
+                        {hasActiveFilters && (
+                            <div className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                </svg>
+                                <span>Active filters: </span>
+                                {currentSearch && <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">Search: "{currentSearch}"</span>}
+                                {currentStatus !== 'all' && <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">Status: {currentStatus.replace('_', ' ')}</span>}
+                                {currentPerPage !== 10 && <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">Show: {currentPerPage === 0 ? 'All' : currentPerPage}</span>}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -404,14 +456,40 @@ function KycContent({ users, statusCounts, totals, search, status, perPage, page
                                 </div>
                             )}
 
-                            {selectedUser.kyc_password_photo_url && (
+                            {selectedUser.kyc_id_card_back_url && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        ID Card Back
+                                    </label>
+                                    <img
+                                        src={selectedUser.kyc_id_card_back_url}
+                                        alt="ID Card Back"
+                                        className="w-full max-w-md mx-auto border rounded-lg"
+                                    />
+                                </div>
+                            )}
+
+                            {selectedUser.kyc_passport_photo_url && (
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                         Passport Photo
                                     </label>
                                     <img
-                                        src={selectedUser.kyc_password_photo_url}
+                                        src={selectedUser.kyc_passport_photo_url}
                                         alt="Passport Photo"
+                                        className="w-full max-w-md mx-auto border rounded-lg"
+                                    />
+                                </div>
+                            )}
+
+                            {selectedUser.kyc_drivers_license_front_url && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Driver's License Front
+                                    </label>
+                                    <img
+                                        src={selectedUser.kyc_drivers_license_front_url}
+                                        alt="Driver's License Front"
                                         className="w-full max-w-md mx-auto border rounded-lg"
                                     />
                                 </div>

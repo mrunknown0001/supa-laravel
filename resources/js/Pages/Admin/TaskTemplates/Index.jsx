@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import AdminAppLayout from '../../../Layouts/AdminAppLayout';
 
@@ -17,34 +17,67 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
     const [localPerPage, setLocalPerPage] = useState(perPage || 10);
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
-    const handleFilterSubmit = (e) => {
-        e.preventDefault();
-        router.visit('/admin/task-templates', {
-            method: 'get',
-            data: {
-                search: localSearch,
-                type: localType,
-                priority: localPriority,
-                perPage: localPerPage,
-                page: 1,
-            },
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (localSearch !== search) {
+                applyFilters({ search: localSearch, page: 1 });
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [localSearch]);
+
+    const applyFilters = (overrides = {}) => {
+        router.get('/admin/task-templates', {
+            search: localSearch,
+            type: localType,
+            priority: localPriority,
+            perPage: localPerPage,
+            page: page,
+            ...overrides,
+        }, {
             preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const handleTypeChange = (newType) => {
+        setLocalType(newType);
+        applyFilters({ type: newType, page: 1 });
+    };
+
+    const handlePriorityChange = (newPriority) => {
+        setLocalPriority(newPriority);
+        applyFilters({ priority: newPriority, page: 1 });
+    };
+
+    const handlePerPageChange = (newPerPage) => {
+        setLocalPerPage(parseInt(newPerPage));
+        applyFilters({ perPage: parseInt(newPerPage), page: 1 });
+    };
+
+    const handleClearFilters = () => {
+        setLocalSearch('');
+        setLocalType('all');
+        setLocalPriority('all');
+        setLocalPerPage(10);
+        router.get('/admin/task-templates', {
+            search: '',
+            type: 'all',
+            priority: 'all',
+            perPage: 10,
+            page: 1,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
         });
     };
 
     const handlePageChange = (newPage) => {
-        router.visit('/admin/task-templates', {
-            method: 'get',
-            data: {
-                search,
-                type,
-                priority,
-                perPage,
-                page: newPage,
-            },
-            preserveState: true,
-        });
+        applyFilters({ page: newPage });
     };
+
+    const hasActiveFilters = localSearch !== '' || localType !== 'all' || localPriority !== 'all' || localPerPage !== 10;
 
     const totalPages = perPage > 0 ? Math.ceil(totals / perPage) : 1;
     const startPage = Math.max(1, page - 2);
@@ -85,18 +118,30 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
             {/* Filters and Search */}
             <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-8">
                 <div className="p-6">
-                    <form onSubmit={handleFilterSubmit} className="flex flex-wrap gap-4">
+                    <div className="flex flex-wrap gap-4">
                         {/* Search */}
                         <div className="flex-1 min-w-0 flex items-center gap-2">
                             <label htmlFor="search" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Search</label>
-                            <input
-                                type="text"
-                                id="search"
-                                value={localSearch}
-                                onChange={(e) => setLocalSearch(e.target.value)}
-                                placeholder="Search by title or description..."
-                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
-                            />
+                            <div className="flex-1 relative">
+                                <input
+                                    type="text"
+                                    id="search"
+                                    value={localSearch}
+                                    onChange={(e) => setLocalSearch(e.target.value)}
+                                    placeholder="Search by title or description..."
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+                                />
+                                {localSearch && (
+                                    <button
+                                        onClick={() => setLocalSearch('')}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Type Filter */}
@@ -105,7 +150,7 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
                             <select
                                 id="type"
                                 value={localType}
-                                onChange={(e) => setLocalType(e.target.value)}
+                                onChange={(e) => handleTypeChange(e.target.value)}
                                 className="w-48 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                             >
                                 <option value="all">All Types</option>
@@ -122,7 +167,7 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
                             <select
                                 id="priority"
                                 value={localPriority}
-                                onChange={(e) => setLocalPriority(e.target.value)}
+                                onChange={(e) => handlePriorityChange(e.target.value)}
                                 className="w-48 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                             >
                                 <option value="all">All Priorities</option>
@@ -138,7 +183,7 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
                             <select
                                 id="perPage"
                                 value={localPerPage}
-                                onChange={(e) => setLocalPerPage(parseInt(e.target.value))}
+                                onChange={(e) => handlePerPageChange(e.target.value)}
                                 className="w-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
                             >
                                 <option value="10">10</option>
@@ -148,15 +193,35 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
                             </select>
                         </div>
 
-                        <div className="flex items-center">
-                            <button
-                                type="submit"
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            >
-                                Filter
-                            </button>
+                        {/* Clear Filters Button */}
+                        {hasActiveFilters && (
+                            <div className="flex items-center">
+                                <button
+                                    onClick={handleClearFilters}
+                                    className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center gap-2"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Clear Filters
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Active Filters Badge */}
+                    {hasActiveFilters && (
+                        <div className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                            <span>Active filters: </span>
+                            {localSearch && <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">Search: "{localSearch}"</span>}
+                            {localType !== 'all' && <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">Type: {localType}</span>}
+                            {localPriority !== 'all' && <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">Priority: {localPriority}</span>}
+                            {localPerPage !== 10 && <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded">Show: {localPerPage === 0 ? 'All' : localPerPage}</span>}
                         </div>
-                    </form>
+                    )}
                 </div>
             </div>
 
@@ -199,7 +264,6 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
                                             </svg>
                                         </button>
-                                        {/* Dropdown menu - no actions yet */}
                                         {openDropdownId === template.id && (
                                             <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg z-10">
                                                 <div className="py-1">
