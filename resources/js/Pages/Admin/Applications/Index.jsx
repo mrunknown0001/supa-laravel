@@ -87,6 +87,14 @@ function ApplicationsContent({ applications, statusCounts, totals, search, statu
 
     return (
         <div className="px-4 sm:px-6 lg:px-8 mt-8">
+
+            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-8">
+                <div className="p-6">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Application</h1>
+                    <p className="text-gray-600 dark:text-gray-400">Manage incoming applications</p>
+                </div>
+            </div>
+
             {/* Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {/* Total Card */}

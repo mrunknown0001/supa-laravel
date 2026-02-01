@@ -115,6 +115,14 @@ function TaskTemplatesContent({ taskTemplates, totals, search, type, priority, p
 
     return (
         <div className="px-4 sm:px-6 lg:px-8 mt-8">
+
+            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-8">
+                <div className="p-6">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Task Templates</h1>
+                    <p className="text-gray-600 dark:text-gray-400">Create and manage templates for recurring task types</p>
+                </div>
+            </div>
+
             {/* Filters and Search */}
             <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-8">
                 <div className="p-6">

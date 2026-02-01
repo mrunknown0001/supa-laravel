@@ -151,6 +151,13 @@ function KycContent({ users, statusCounts, totals, search, status, perPage, page
             <Head title="KYC Check" />
 
             <div className="px-4 sm:px-6 lg:px-8 mt-8">
+                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                    <div className="p-6">
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">KYC Check</h1>
+                        <p className="text-gray-600 dark:text-gray-400">User KYC Check</p>
+                    </div>
+                </div>
+
                 {/* Header Stats */}
                 <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700">
